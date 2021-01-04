@@ -100,13 +100,13 @@ export default class ModuleManager extends ModuleProxy {
                    if (_event.mod) {
                        const mod = this._cache.get(_event.mod);
                        if (mod) {
-                           mod.on(_event.name, (...args) => instance[_event.call](...args));
+                           mod.on(_event.name, instance[_event.call].bind(instance));
 
                            continue;
-                       }
+                        }
                    }
 
-                   if (typeof this._m.on === 'function') this._m.on(_event.name, (...args) => instance[_event.call](...args));
+                   if (typeof this._m.on === 'function') this._m.on(_event.name, instance[_event.call].bind());
                }
            }
 
