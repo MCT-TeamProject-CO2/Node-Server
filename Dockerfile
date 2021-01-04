@@ -11,4 +11,4 @@ RUN npm i
 
 COPY . .
 
-ENTRYPOINT [ "node", "." ]
+ENTRYPOINT [ "node", "--experimental-loader=./util/loader.js", "." ]
