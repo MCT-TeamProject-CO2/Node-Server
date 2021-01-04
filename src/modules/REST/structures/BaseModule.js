@@ -6,6 +6,10 @@ export default class BaseModule {
         this._m = main;
     }
 
+    get config() {
+        return this._m.config;
+    }
+
     get log() {
         return this._m.log;
     }
