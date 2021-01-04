@@ -79,7 +79,7 @@ export default class log {
     }
 
     static verbose(...args) {
-        log.info(...args);
+        log._log('verbose',...args);
     }
 
     static warn(...args) {
