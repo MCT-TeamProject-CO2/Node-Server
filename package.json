@@ -1,0 +1,23 @@
+{
+  "name": "node-server",
+  "version": "0.1.0",
+  "description": "",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "test": "docker-compose build && docker-compose up"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MCT-TeamProject-C02/Node-Server.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/MCT-TeamProject-C02/Node-Server/issues"
+  },
+  "homepage": "https://github.com/MCT-TeamProject-C02/Node-Server#readme",
+  "dependencies": {
+    "@yimura/import-dir": "^0.1.10"
+  }
+}
