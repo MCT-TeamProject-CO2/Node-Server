@@ -1,5 +1,6 @@
 import ModuleManager from './managers/Modules.js'
 import log from './util/Log.js'
+import auth from '~/data/auth.js'
 import config from '~/data/config.js'
 
 export default class Main {
@@ -7,6 +8,7 @@ export default class Main {
 
     constructor() {
         Object.assign(this, {
+            auth,
             config,
             log
         });
