@@ -12,11 +12,14 @@ export default class Influx extends BaseModule {
         });
 
         this._instance = new InfluxDB({ url: this.auth.influx_db.url, token: this.auth.influx_db.token });
-        this._api = this._instance.getQueryApi(this.auth.influx_db.organisation);
     }
 
-    get api() {
-        return this._api;
+    read() {
+        return this._instance.getQueryApi(this.auth.influx_db.organisation);
+    }
+
+    write(bucket, time_interval = 'ms') {
+        return this._instance.getWriteApi(this.auth.influx_db.organisation, bucket, time_interval);
     }
 
     init() {
