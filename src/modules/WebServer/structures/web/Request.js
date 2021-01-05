@@ -1,6 +1,8 @@
 import { HttpResponseCode } from '../../util/Constants.js'
 
 export default class Request {
+    _body;
+
     /**
      * @param {Server} webserver
      * @param {http.IncomingMessage} req 
@@ -19,7 +21,32 @@ export default class Request {
     }
 
     get url() {
-        return this.req.url;
+        return this.req.url.replace(/\/$/, '');
+    }
+
+    /**
+     * @returns {Promise<string>|string} Returns a Promise with the body in or a string directly if the body has been parsed before
+     */
+    body() {
+        if (this._body) return this._body;
+
+        return new Promise((resolve, reject) => {
+            this._body = '';
+
+            this.req.on('data', (d) => this._body += d);
+            this.req.on('end', () => resolve(this._body));
+        });
+    }
+
+    /**
+     * @returns {Object} The parsed body as a JSON
+     */
+    async json() {
+        try {
+            return JSON.parse(await this.body());
+        } catch (error) {
+            return null;
+        }
     }
 
     /**
