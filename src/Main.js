@@ -14,6 +14,13 @@ export default class Main {
         });
     }
 
+    /**
+     * @returns {ModuleManager}
+     */
+    get modules() {
+        return this._modulesManager;
+    }
+
     start() {
         this._modulesManager.load();
     }
