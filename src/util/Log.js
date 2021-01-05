@@ -4,17 +4,19 @@ import util from 'util'
 const level_types = ['VERBOSE', 'INFO', 'WARNING', 'ERROR', 'CRITICAL'];
 
 export default class log {
-    _logLevel = 'INFO';
+    static _logLevel = 'INFO';
     constructor() {}
 
     /**
-     * @param {String} level The level of logging to be used
-     * @param {String} name The informative name from where the log came
-     * @param {String} message
+     * @param {string} level The level of logging to be used
+     * @param {string} name The informative name from where the log came
+     * @param {string} message
      * @param {*} [data=null] This can be anything that you want to add to the log
-     * @param {Boolean} [show_time=true] If the time of the log should be added with the log
+     * @param {boolean} [show_time=true] If the time of the log should be added with the log
      */
     static _log(level, name, message, data = null, show_time = true) {
+        if (typeof name !== 'string' || typeof message !== 'string') throw new TypeError('Name and message argument expect a string.');
+
         level = level.toUpperCase();
 
         if (!level_types.includes(level)) throw new TypeError('Invalid logging level used!');
@@ -49,7 +51,7 @@ export default class log {
             if (level != 'VERBOSE') {
                 const date = new Date();
 
-                msg = `${log}[${name.toUpperCase()}/${level}] ${message}`;
+                message = `${log}[${name.toUpperCase()}/${level}] ${message}\n`;
                 if (data) message += `${util.format(data)}\n`;
 
                 fs.appendFile(
@@ -65,8 +67,8 @@ export default class log {
 
     static setLogLevel(level){
         level = level.toUpperCase();
-        if (!level_types.includes(level)) {
-            this._logLevel = level
+        if (level_types.includes(level)) {
+            log._logLevel = level
         } 
         else {
             throw new TypeError('Invalid logging level used!');
