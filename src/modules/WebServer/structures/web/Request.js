@@ -91,7 +91,7 @@ export default class Request {
             }
 
             this.writeHead(code, headers);
-            this.end();
+            this.end(data);
 
             return true;
         }
