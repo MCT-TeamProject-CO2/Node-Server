@@ -34,6 +34,14 @@ export const getSession = (sessionId) => {
 };
 
 /**
+ * Get all the sessions from a user.
+ * @param {string} uid 
+ */
+export const getSessionsForUserId = (uid) => {
+    return SessionSchema.find({ uid }).exec();
+}
+
+/**
  * Removes the session from the DB
  * @param {string} sessionId 
  * @returns {Promise<Object>}
@@ -42,9 +50,15 @@ export const revokeSession = (sessionId) => {
     return SessionSchema.deleteOne({ sessionId }).exec();
 }
 
+export const revokeSessionsForUserId = (uid) => {
+    return SessionSchema.deleteMany({ uid }).exec();
+};
+
 export default {
     createSession,
     doesSessionExist,
     getSession,
-    revokeSession
+    getSessionsForUserId,
+    revokeSession,
+    revokeSessionsForUserId
 };
