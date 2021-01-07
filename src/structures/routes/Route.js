@@ -32,6 +32,6 @@ export default class Route {
      * @returns {Promise<boolean>}
      */
     isSessionValid(request) {
-        return this.modules.session.doesSessionExist(request.headers['authorization']);
+        return this.modules.session.isSessionValid(request.headers['authorization']);
     }
 }
