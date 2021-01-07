@@ -14,9 +14,7 @@ export default class SMS extends BaseModule {
         });
     }
 
-
     async init() {
-
         // let message = this.createMessages("32476067619", "test123");
         // let test = await this.sendTextMessages(message);
         return true;
@@ -66,7 +64,6 @@ export default class SMS extends BaseModule {
             method: 'POST',
             body: JSON.stringify({ messages })
         });
-        
         return res.ok;
     }
 }
