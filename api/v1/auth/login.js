@@ -19,8 +19,8 @@ export default class Login extends Route {
         const password = body.password;
         delete body.password;
 
-        const user = await this.modules.user.model.getUser(body);
-        if (!user) request.reject(403);
+        const user = await this.modules.user.model.getUser(body, true);
+        if (!user || user.disabled) request.reject(403);
 
         if (!await this.modules.session.verifyHash(password, user.password)) {
             return request.reject(403);
