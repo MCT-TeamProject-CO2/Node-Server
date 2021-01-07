@@ -25,4 +25,13 @@ export default class Route {
     get route() {
         throw new Error('The route of this endpoint has not been defined.');
     }
+
+    /**
+     * Checks if a session is valid
+     * @param {Request} request
+     * @returns {Promise<boolean>}
+     */
+    isSessionValid(request) {
+        return this.modules.session.doesSessionExist(request.headers['authorization']);
+    }
 }
