@@ -11,7 +11,8 @@ export default class Sessions extends BaseModule {
         super(main);
 
         this.register(Sessions, {
-            name: 'session'
+            name: 'session',
+            requires: [ 'mongo' ]
         });
     }
 

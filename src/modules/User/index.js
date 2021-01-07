@@ -10,7 +10,8 @@ export default class User extends BaseModule {
         super(main);
 
         this.register(User, {
-            name: 'user'
+            name: 'user',
+            requires: [ 'mongo' ]
         });
     }
 
