@@ -51,16 +51,18 @@ export default class Sessions extends BaseModule {
      * @param {string} sessionId
      * @returns {boolean}
      */
-    async doesSessionExist(sessionId) {
-        if (this.sessions.has(sessionId)) return true;
+    async isSessionValid(sessionId) {
+        let session = this.sessions.get(sessionId);
+        if (session) return session.isValid();
 
-        const session = await this.model.getSession(sessionId);
+        session = await this.model.getSession(sessionId);
         if (session) {
             const user = await this.modules.user.model.getUser({ uid: session.uid });
+            session = new Session(sessionId, user);
 
-            this.sessions.set(sessionId, new Session(sessionId, user));
+            this.sessions.set(sessionId, session);
 
-            return true;
+            return session.isValid();
         }
         return false;
     }
@@ -78,6 +80,7 @@ export default class Sessions extends BaseModule {
      * Compares a hashed password with a plaintext to see if they match
      * @param {string} plainText 
      * @param {string} hashedPass 
+     * @returns {Promise<boolean>}
      */
     verifyHash(plainText, hashedPass) {
         return bcrypt.compare(plainText, hashedPass);
