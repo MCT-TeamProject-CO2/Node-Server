@@ -9,7 +9,7 @@ export default class Users extends Route {
     }
 
     get route() {
-        return '';
+        return '/users';
     }
 
     get model() {
