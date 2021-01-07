@@ -13,7 +13,15 @@ export default class Session {
         return this._sessionId;
     }
 
+    get uid() {
+        return this._user.uid;
+    }
+
     get user() {
         return this._user;
+    }
+
+    isValid() {
+        return !this._user.disabled;
     }
 }
