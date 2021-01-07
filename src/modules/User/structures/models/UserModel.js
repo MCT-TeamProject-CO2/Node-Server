@@ -6,7 +6,8 @@ import UserSchema from '../schemas/UserSchema.js'
  *  email: string,
  *  type: AccountTypes,
  *  username: [string],
- *  password: [string]
+ *  password: [string],
+ *  phoneNumber: [string]
  * }} user 
  */
 export const createUser = (user) => {
@@ -16,34 +17,47 @@ export const createUser = (user) => {
 /**
  * Searches for a user based on an object and updates the user to be disabled
  * @param {Object} q 
+ * @param {boolean} [getPassword = false]
  */
-export const disableUser = (q) => {
-    return updateUser(q, { disabled: true });
+export const disableUser = (q, getPassword = false) => {
+    return updateUser(q, { disabled: true }, getPassword);
 };
 
 /**
  * Find a user based on a user object
  * @param {Object} q 
+ * @param {boolean} [getPassword = false] If a password should be returned when fetching the user.
  */
-export const getUser = (q) => {
-    return UserSchema.findOne(q).exec();
+export const getUser = (q, getPassword = false) => {
+    return UserSchema
+        .findOne(q)
+        .select(getPassword ? {} : { password: 0 })
+        .exec();
 };
 
 /**
  * Find multiple users based on a search query
  * @param {Object} q 
+ * @param {boolean} [getPassword = false] If a password should be returned when fetching the user.
  */
-export const getUsers = (q) => {
-    return UserSchema.find(q).exec();
+export const getUsers = (q, getPassword = false) => {
+    return UserSchema
+        .find(q)
+        .select(getPassword ? {} : { password: 0 })
+        .exec();
 };
 
 /**
  * Find a user document and update it with an object
  * @param {Object} q 
  * @param {Object} update 
+ * @param {boolean} [getPassword = false]
  */
-export const updateUser = (q, update) => {
-    return UserSchema.findOneAndUpdate(q, update, { new: true }).exec();
+export const updateUser = (q, update, getPassword = false) => {
+    return UserSchema
+        .findOneAndUpdate(q, update, { new: true })
+        .select(getPassword ? {} : { password: 0 })
+        .exec();
 };
 
 export default {
