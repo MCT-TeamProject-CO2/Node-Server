@@ -14,6 +14,11 @@ export const HttpResponseCode = {
         status: '403 - Permission Denied',
         message: 'The client does not have permission to access the requested resource.'
     },
+    404: {
+        code: 404,
+        status: '404 - Not Found',
+        message: 'The requested resource has not been found.'
+    },
     406: {
         code: 406,
         status: '406 - Not Acceptable',
