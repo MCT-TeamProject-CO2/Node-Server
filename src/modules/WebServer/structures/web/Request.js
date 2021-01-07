@@ -16,6 +16,10 @@ export default class Request {
         });
     }
 
+    get headers() {
+        return this.req.headers;
+    }
+
     get method() {
         return this.req.method.toLowerCase();
     }
