@@ -54,7 +54,7 @@ export default class Sessions extends BaseModule {
     async doesSessionExist(sessionId) {
         if (this.sessions.has(sessionId)) return true;
 
-        const session = this.model.getSession(sessionId);
+        const session = await this.model.getSession(sessionId);
         if (session) {
             const user = await this.modules.user.model.getUser({ uid: session.uid });
 
@@ -70,7 +70,7 @@ export default class Sessions extends BaseModule {
      * @param {string} sessionId 
      */
     revokeSession(sessionId) {
-        this.sessions.delete();
+        this.sessions.delete(sessionId);
         this.model.revokeSession(sessionId);
     }
 
