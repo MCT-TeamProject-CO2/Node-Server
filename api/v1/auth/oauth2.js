@@ -40,6 +40,7 @@ export default class oauth2 extends Route {
         if (!res.ok) return request.reject(406, {
             code: 406,
             status: '406 - Not Acceptable',
+            message: 'After Processing the Request Body the server did not find the content that was needed to complete the request.',
             data: json
         });
 
@@ -57,6 +58,7 @@ export default class oauth2 extends Route {
         if (!res.ok) return request.reject(406, {
             code: 406,
             status: '406 - Not Acceptable',
+            message: 'After Processing the Request Body the server did not find the content that was needed to complete the request.',
             data: json
         });
 
