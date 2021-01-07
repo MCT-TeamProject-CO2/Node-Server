@@ -20,9 +20,9 @@ export default class Mail extends Route {
         const body = await request.json();
         if (!body) return request.reject(400);
 
-        await this.mail.models.remove(body);
+        this.mail.models.remove(body);
 
-        return request.accept(null, 204);
+        return request.accept(null, 202);
     }
 
     /**
