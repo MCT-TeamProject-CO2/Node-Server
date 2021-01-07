@@ -26,8 +26,18 @@ export default class Users extends Route {
         const body = await request.json();
         if (!body) return request.reject(400);
 
+        const user = await this.model.disableUser(body, false);
+        delete user.password;
+
+        const sessions = this.modules.session.sessions;
+        sessions.forEach((session, name) => {
+            if (session.uid == user.uid) sessions.delete(name);
+        });
+
+        await this.modules.session.model.revokeSessionsForUserId(user.uid);
+
         return request.accept(
-            await this.model.disableUser(body),
+            user,
             200
         );
     }
