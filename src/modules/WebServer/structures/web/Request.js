@@ -24,8 +24,12 @@ export default class Request {
         return this.req.method.toLowerCase();
     }
 
+    get searchParams() {
+        return this.req.url.split('?')[1];
+    }
+
     get url() {
-        return this.req.url.replace(/\/$/, '');
+        return this.req.url.split('?')[0].replace(/\/$/, '');
     }
 
     /**
