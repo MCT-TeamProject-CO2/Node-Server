@@ -8,7 +8,7 @@ export default class Influx extends BaseModule {
         super(main);
 
         this.register(Influx, {
-            name: 'db'
+            name: 'influx'
         });
 
         this._instance = new InfluxDB({ url: this.auth.influx_db.url, token: this.auth.influx_db.token });
