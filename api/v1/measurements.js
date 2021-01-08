@@ -39,10 +39,12 @@ export default class Measurements extends Route {
         const searchParams = new URLSearchParams(request.searchParams);
 
         const tagString = searchParams.get('tagString');
+        const delta = searchParams.has('delta') ? searchParams.get('delta') : 10;
+
         if (!tagString) return request.reject(400);
 
         let date = new Date();
-        date.setMinutes(date.getMinutes() - 15);
+        date.setMinutes(date.getMinutes() - delta);
 
         const query =
         `from(bucket: "c02")
