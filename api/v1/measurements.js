@@ -34,6 +34,8 @@ export default class Measurements extends Route {
      * @param {Request} request 
      */
     async get(request) {
+        if (!await this.isSessionValid(request)) return request.reject(403);
+
         const searchParams = new URLSearchParams(request.searchParams);
 
         const tagString = searchParams.get('tagString');
