@@ -46,4 +46,27 @@ export default class Location extends Route {
         }
         return request.accept('', 201);
     }
+
+    /**
+     * 
+     * @param {Request} request 
+     */
+    async put(request) {
+        if (!await this.isSessionValid(request, 'admin')) return request.reject(403);
+
+        const body = await request.json();
+        if (!body || !body.query || !body.update) return request.reject(400);
+
+        try {
+            return request.accept(
+                await this.model.update(body.query, body.update)
+            );
+        } catch (error) {
+            return request.reject(406, {
+                code: 406,
+                status: "406 - Not Acceptable",
+                message: error.message
+            });
+        }
+    }
 }
