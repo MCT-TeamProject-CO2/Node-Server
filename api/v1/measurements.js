@@ -39,16 +39,50 @@ export default class Measurements extends Route {
         const searchParams = new URLSearchParams(request.searchParams);
 
         const tagString = searchParams.get('tagString');
-        const delta = searchParams.has('delta') ? searchParams.get('delta') : 10;
+        const delta = searchParams.get('delta');
+        const start = searchParams.get('start');
+        const end = searchParams.get('end');
+        const fields = searchParams.get('fields');
 
         if (!tagString) return request.reject(400);
 
-        let date = new Date();
-        date.setMinutes(date.getMinutes() - delta);
+        let constraints = '';
+
+        if (!start && !end) {
+            const date = new Date();
+            date.setMinutes(date.getMinutes() - delta ? delta : 10);
+
+            constraints = `|> range(start: ${date.toISOString()})`;
+        }
+        else if (delta && (start || end)) return request.reject(400);
+        else if (start && end) {
+            if (isNaN(start) || isNaN(end)) return request.reject(400);
+
+            const startDate = new Date(parseInt(start));
+            const endDate = new Date(parseInt(end));
+
+            if (startDate == 'Invalid Date' || endDate == 'Invalid Date') return request.reject(400);
+
+            constraints = `|> range(start: ${startDate.toISOString()}, stop: ${endDate.toISOString()})`;
+        }
+
+        if (fields) {
+            const split = fields.split(',');
+
+            constraints += '|> filter(fn: (r) =>';
+
+            for (let i = 0; i < split.length; i++) {
+                const field = split[i];
+                
+                if (i) constraints += ' or ';
+                constraints += `r._field == "${field}"`;
+            }
+
+            constraints += ')';
+        }
 
         const query =
-        `from(bucket: "c02")
-        |> range(start: ${date.toISOString()})
+        `from(bucket: "c02") ${constraints}
         |> filter(fn: (r) => r["_measurement"] =~ /${tagString}.*/)`;
 
         return request.accept(
