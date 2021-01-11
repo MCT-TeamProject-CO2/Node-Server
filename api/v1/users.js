@@ -21,7 +21,7 @@ export default class Users extends Route {
      * @param {Rquest} request 
      */
     async delete(request) {
-        if (!await this.isSessionValid(request)) return request.reject(403);
+        if (!await this.isSessionValid(request, 'admin')) return request.reject(403);
 
         const body = await request.json();
         if (!body) return request.reject(400);
@@ -47,7 +47,7 @@ export default class Users extends Route {
      * @param {Request} request 
      */
     async get(request) {
-        if (!await this.isSessionValid(request)) return request.reject(403);
+        if (!await this.isSessionValid(request, 'admin')) return request.reject(403);
 
         return request.accept(
             await this.model.getUsers({})
@@ -59,7 +59,7 @@ export default class Users extends Route {
      * @param {Request} request 
      */
     async post(request) {
-        if (!await this.isSessionValid(request)) return request.reject(403);
+        if (!await this.isSessionValid(request, 'admin')) return request.reject(403);
 
         const body = await request.json();
         if (!body) return request.reject(400);
@@ -84,7 +84,7 @@ export default class Users extends Route {
      * @param {Request} request 
      */
     async put(request) {
-        if (!await this.isSessionValid(request)) return request.reject(403);
+        if (!await this.isSessionValid(request, 'admin')) return request.reject(403);
 
         const body = await request.json();
         if (!body || !body.query || !body.update) return request.reject(400);

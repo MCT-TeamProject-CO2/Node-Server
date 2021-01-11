@@ -30,7 +30,7 @@ export default class Location extends Route {
      * @param {Request} request 
      */
     async post(request) {
-        if (!await this.isSessionValid(request)) return request.reject(403);
+        if (!await this.isSessionValid(request, 'admin')) return request.reject(403);
 
         const body = await request.json();
         if (!body) return request.reject(400);
