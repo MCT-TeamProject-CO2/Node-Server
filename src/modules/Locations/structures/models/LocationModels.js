@@ -43,7 +43,6 @@ export const getRoomForTagString = async (tagString) => {
 /**
  * @param {Object} q
  * @param {LocationSchema} location 
- * @param {boolean} upsert If the document should be create if it isn't found
  * @returns {Promise<LocationSchema>}
  */
 export const update = (q, location) => {
