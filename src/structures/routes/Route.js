@@ -29,9 +29,10 @@ export default class Route {
     /**
      * Checks if a session is valid
      * @param {Request} request
+     * @param {string} [permLevel = "info"]
      * @returns {Promise<boolean>}
      */
-    isSessionValid(request) {
-        return this.modules.session.isSessionValid(request.headers['authorization']);
+    isSessionValid(request, permLevel = 'info') {
+        return this.modules.session.isSessionValid(request.headers['authorization'], permLevel);
     }
 }

@@ -1,6 +1,6 @@
 import mongoose from 'mongoose'
 import { v4 as uuidv4 } from 'uuid'
-import { AccountTypes, SaltRounds } from '../../util/Constants.js'
+import { AccountTypes, PermissionLevels, SaltRounds } from '../../util/Constants.js'
 import bcrypt from 'bcrypt'
 
 const users = new mongoose.Schema({
@@ -10,6 +10,7 @@ const users = new mongoose.Schema({
     phone_number: { type: String, unique: true },
     disabled: { type: Boolean, default: false },
     username: { type: String, unique: true },
+    permission: { type: String, enum: PermissionLevels, default: 'info'},
     password: String
 });
 

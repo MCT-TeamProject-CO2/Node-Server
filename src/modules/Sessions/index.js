@@ -41,7 +41,7 @@ export default class Sessions extends BaseModule {
 
         await this.model.createSession(user.uid, sessionId);
 
-        const session = new Session(sessionId, user);
+        const session = new Session(this, sessionId, user);
         // Keep a local copy of our sessions
         this.sessions.set(sessionId, session);
 
@@ -52,18 +52,18 @@ export default class Sessions extends BaseModule {
      * @param {string} sessionId
      * @returns {boolean}
      */
-    async isSessionValid(sessionId) {
+    async isSessionValid(sessionId, permLevel) {
         let session = this.sessions.get(sessionId);
-        if (session) return session.isValid();
+        if (session) return session.isValid(permLevel);
 
         session = await this.model.getSession(sessionId);
         if (session) {
             const user = await this.modules.user.model.getUser({ uid: session.uid });
-            session = new Session(sessionId, user);
+            session = new Session(this, sessionId, user);
 
             this.sessions.set(sessionId, session);
 
-            return session.isValid();
+            return session.isValid(permLevel);
         }
         return false;
     }

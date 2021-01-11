@@ -1,5 +1,6 @@
 import BaseModule from './structures/BaseModule.js'
 import UserModel from './structures/models/UserModel.js'
+import Constants from './util/Constants.js'
 
 export default class User extends BaseModule {
     /**
@@ -13,6 +14,10 @@ export default class User extends BaseModule {
             name: 'user',
             requires: [ 'mongo' ]
         });
+    }
+
+    get constants() {
+        return Constants;
     }
 
     get model() {

@@ -1,10 +1,11 @@
 export default class Session {
     /**
-     * 
+     * @param {Sessions} module
      * @param {string} sessionId 
      * @param {UserSchema} user 
      */
-    constructor(sessionId, user) {
+    constructor(module, sessionId, user) {
+        this._module = module;
         this._sessionId = sessionId;
         this._user = user;
     }
@@ -21,7 +22,11 @@ export default class Session {
         return this._user;
     }
 
-    isValid() {
+    isValid(permlevel) {
+        const levels = this._module.modules.user.constants.PermissionLevels;
+        
+        if (levels.indexOf(permlevel) > levels.indexOf(this._user.permission))
+            return false;
         return !this._user.disabled;
     }
 }
