@@ -24,8 +24,8 @@ export default class Server extends EventEmitter {
     getHeaders(req) {
         return {
             'Access-Control-Allow-Credentials': false,
-            'Access-Control-Allow-Headers': this.config.allow_headers.reduce(reduce, ''),
-            'Access-Control-Allow-Methods': this.config.allow_methods.reduce(reduce, ''),
+            'Access-Control-Allow-Headers': this.config.allow_headers.reduce(reduceFun, ''),
+            'Access-Control-Allow-Methods': this.config.allow_methods.reduce(reduceFun, ''),
             'Access-Control-Allow-origin': this._matchOrigin(req.headers.origin)
         }
     }
@@ -87,4 +87,4 @@ export default class Server extends EventEmitter {
     }
 }
 
-const reduce = (accum, value) => accum !== '' ? accum += ',' : accum + value;
+const reduceFun = (accum, value) => accum !== '' ? accum += ',' + value : accum = value;
