@@ -5,7 +5,13 @@ export default {
         port: 8080,
 
         allow_headers: [
-
+            'Authorization',
+            'Access-Control-Allow-Headers',
+            'Origin',
+            'Accept',
+            'Content-Type',
+            'Access-Control-Request-Method',
+            'Access-Control-Request-Headers'
         ],
         allow_methods: [
             'DELETE',
@@ -17,7 +23,7 @@ export default {
         ],
         origins: [
             'http://localhost:8080',
-            'https://example.com'
+            'https://teamproject.pieceof.art'
         ]
     }
 };
