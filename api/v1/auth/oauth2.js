@@ -45,7 +45,7 @@ response_type=code&redirect_uri=${encodeURIComponent(searchParams.get('redirect'
 
         const tokenRequestBody = {
             client_id: ms_oauth.clientId,
-            scope: ms_oauth.scopes.join('%20'),
+            scope: 'openid',
             redirect_uri: uri,
             client_secret: ms_oauth.clientSecret,
             grant_type: 'authorization_code',
