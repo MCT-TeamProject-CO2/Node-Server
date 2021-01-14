@@ -36,20 +36,23 @@ response_type=code&redirect_uri=${encodeURIComponent(searchParams.get('redirect'
      */
     async post(request) {
         const body = await request.json();
-        if (!body || !body.code) return request.reject(400);
+        if (!body || !body.code || !body.uri) return request.reject(400);
 
         const code = body.code;
+        const uri = body.uri;
+
+        const ms_oauth = this.auth.ms_oauth;
 
         const tokenRequestBody = {
-            client_id: this.auth.ms_oauth.clientId,
-            scope: 'openid',
-            redirect_uri: 'http://localhost:8080',
-            client_secret: this.auth.ms_oauth.clientSecret,
+            client_id: ms_oauth.clientId,
+            scope: ms_oauth.scopes.join('%20'),
+            redirect_uri: uri,
+            client_secret: ms_oauth.clientSecret,
             grant_type: 'authorization_code',
             code: code
         };
         
-        let res = await fetch('https://login.microsoftonline.com/common/oauth2/v2.0/token', {
+        let res = await fetch(`https://login.microsoftonline.com/${ms_oauth.tenant}/oauth2/v2.0/token`, {
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded'
             },
