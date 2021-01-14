@@ -14,13 +14,14 @@ export default class oauth2 extends Route {
      * @param {Request} request 
      */
     get(request) {
+        const searchParams = new URLSearchParams(request.searchParams);
+
         const ms_oauth = this.auth.ms_oauth;
         const url = `https://login.microsoftonline.com/${ms_oauth.tenant}/oauth2/v2.0/authorize?\
-        client_id=${ms_oauth.clientId}\
-        &response_type=code\
-        &redirect_uri=http%3A%2F%2Flocalhost%3A8080\
-        &response_mode=query\
-        &scope=${ms_oauth.scopes.join('%20')}`;
+client_id=${ms_oauth.clientId}&\
+response_type=code&redirect_uri=${searchParams.redirect}\
+&response_mode=query\
+&scope=${ms_oauth.scopes.join('%20')}`;
 
         request.writeHead(301, {
             'Location': url,
