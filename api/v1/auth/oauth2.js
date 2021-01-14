@@ -15,11 +15,12 @@ export default class oauth2 extends Route {
      */
     get(request) {
         const searchParams = new URLSearchParams(request.searchParams);
+        if (!searchParams.has('redirect')) return request.reject(400);
 
         const ms_oauth = this.auth.ms_oauth;
         const url = `https://login.microsoftonline.com/${ms_oauth.tenant}/oauth2/v2.0/authorize?\
 client_id=${ms_oauth.clientId}&\
-response_type=code&redirect_uri=${searchParams.get('redirect')}\
+response_type=code&redirect_uri=${encodeURIComponent(searchParams.get('redirect'))}\
 &response_mode=query\
 &scope=${ms_oauth.scopes.join('%20')}`;
 
