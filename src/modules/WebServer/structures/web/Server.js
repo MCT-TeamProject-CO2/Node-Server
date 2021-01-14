@@ -73,6 +73,8 @@ export default class Server extends EventEmitter {
         if (method === 'options') {
             res.writeHead(204, this.getHeaders(req));
             res.end();
+
+            return true;
         }
         return false;
     }
