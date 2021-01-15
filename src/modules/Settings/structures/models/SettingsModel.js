@@ -1,4 +1,4 @@
-import SettingsSchema from '../schemas/MailSchema.js'
+import SettingsSchema from '../schemas/SettingsSchema.js'
 
 /**
  * Creates a new document if it doesn't exist.
