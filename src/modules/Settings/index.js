@@ -7,8 +7,6 @@ export default class Settings extends BaseModule {
         super(main);
 
         this.register(Settings, {
-            disabled: true,
-
             name: 'settings',
             requires: [ 'mongo' ], 
             events: [
@@ -25,7 +23,10 @@ export default class Settings extends BaseModule {
         return SettingsModel;
     }
 
-    createSettings() {
-        this.models.createIfNotExists();
+    async createSettings() {
+        if (await this.models.createIfNotExists())
+            this.log.info('SETTINGS', 'Created settings object.');
+        else
+            this.log.verbose('SETTINGS', 'Settings object already exists, skipping...');
     }
 }
