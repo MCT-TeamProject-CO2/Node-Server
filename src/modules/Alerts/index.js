@@ -13,10 +13,6 @@ export default class Alert extends BaseModule {
             name: 'alert',
             requires: [ 'mongo' ]
         });
-
-        setInterval(() => {
-            calculateAlerts(); 
-          }, 5*60000); // minutes*60000 to get milliseconds
     }
 
     get models() {
@@ -70,7 +66,6 @@ export default class Alert extends BaseModule {
      * 
      */
     async get(tagString, delta, fields) {
-        
         let constraints = '';
 
         const date = new Date();
@@ -101,6 +96,13 @@ export default class Alert extends BaseModule {
         return this.query(query)
     }
 
+    init() {
+        setInterval(() => {
+            calculateAlerts(); 
+        }, 5*60000); // minutes*60000 to get milliseconds
+
+        return true;
+    }
 }
 
 
