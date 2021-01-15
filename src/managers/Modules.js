@@ -85,35 +85,37 @@ export default class ModuleManager extends ModuleProxy {
      */
     async _checkModuleRequirements() {
         for (const [ name, instance ] of this._cache) {
-           if (instance.requires) {
-               for (const requirement of instance.requires) {
-                   if (!this._cache.has(requirement)) {
-                       log.error('MODULES', `Module "${name}" has an unmet requirement "${requirement}"`);
+            if (instance.requires) {
+                for (const requirement of instance.requires) {
+                    if (!this._cache.has(requirement)) {
+                        log.error('MODULES', `Module "${name}" has an unmet requirement "${requirement}"`);
 
-                       return false;
-                   }
-               }
-           }
+                        return false;
+                    }
+                }
+            }
 
-           if (instance.events) {
-               for (const _event of instance.events) {
-                   if (_event.mod) {
-                       const mod = this._cache.get(_event.mod);
-                       if (mod) {
-                           mod.on(_event.name, instance[_event.call].bind(instance));
+            if (instance.events) {
+                for (const _event of instance.events) {
+                    if (_event.mod) {
+                        const mod = this._cache.get(_event.mod);
+                        if (mod) {
+                            mod.on(_event.name, instance[_event.call].bind(instance));
 
-                           continue;
+                            continue;
                         }
-                   }
+                    }
 
-                   if (typeof this._m.on === 'function') this._m.on(_event.name, instance[_event.call].bind());
-               }
-           }
+                    if (typeof this._m.on === 'function') this._m.on(_event.name, instance[_event.call].bind());
+                }
+            }
+        }
 
-           if (typeof instance.init === 'function' && !await instance.init()) return false;
-       }
+        for (const [ name, instance ] of this._cache) {
+            if (typeof instance.init === 'function' && !await instance.init()) return false;
+        }
 
-       return true;
+        return true;
     }
 
     /**
