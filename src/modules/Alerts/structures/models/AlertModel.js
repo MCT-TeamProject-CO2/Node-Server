@@ -1,4 +1,4 @@
-import AlertSchema from '../schemas/AlertSchema.js'
+import AlertSchema from '../schemas/Alertschema.js'
 
 /**
  * Creates a new document if it doesn't exist.
