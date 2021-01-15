@@ -8,6 +8,8 @@ export default class Alert extends BaseModule {
         super(main);
 
         this.register(Alert, {
+            disabled: true,
+
             name: 'alert',
             requires: [ 'mongo' ]
         });

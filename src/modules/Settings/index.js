@@ -7,6 +7,8 @@ export default class Settings extends BaseModule {
         super(main);
 
         this.register(Settings, {
+            disabled: true,
+
             name: 'settings',
             requires: [ 'mongo' ], 
             events: [
