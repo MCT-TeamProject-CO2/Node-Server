@@ -7,4 +7,4 @@ const alertConfigs = new mongoose.Schema({
     code: { type: Number, required: true }
 });
 
-export default mongoose.model('alert', alertConfigs);
+export default mongoose.model('alerts', alertConfigs);
