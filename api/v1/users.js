@@ -47,6 +47,17 @@ export default class Users extends Route {
      * @param {Request} request 
      */
     async get(request) {
+        if (!await this.isSessionValid(request)) return request.reject(403);
+
+        const searchParams = new URLSearchParams(request.searchParams);
+        const me = searchParams.has('me');
+
+        if (me) {
+            const session = await this.modules.session.getSession(request.headers['authorization']);
+
+            return request.accept(session.user);
+        }
+
         if (!await this.isSessionValid(request, 'admin')) return request.reject(403);
 
         return request.accept(
