@@ -50,11 +50,11 @@ export default class Sessions extends BaseModule {
 
     /**
      * @param {string} sessionId
-     * @returns {boolean}
+     * @returns {Session}
      */
-    async isSessionValid(sessionId, permLevel) {
+    async getSession(sessionId) {
         let session = this.sessions.get(sessionId);
-        if (session) return session.isValid(permLevel);
+        if (session) return session;
 
         session = await this.model.getSession(sessionId);
         if (session) {
@@ -63,8 +63,18 @@ export default class Sessions extends BaseModule {
 
             this.sessions.set(sessionId, session);
 
-            return session.isValid(permLevel);
+            return session;
         }
+        return null;
+    }
+
+    /**
+     * @param {string} sessionId
+     * @returns {boolean}
+     */
+    async isSessionValid(sessionId, permLevel) {
+        const session = await this.getSession(sessionId);
+        if (session) return session.isValid();
         return false;
     }
 
