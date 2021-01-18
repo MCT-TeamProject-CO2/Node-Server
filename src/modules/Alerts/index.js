@@ -2,16 +2,27 @@ import BaseModule from './structures/BaseModule.js'
 import AlertModel from './structures/models/AlertModel.js'
 
 export default class Alert extends BaseModule {
+    _ready = false;
     ppmThresholds = [];
 
     constructor(main) {
         super(main);
 
         this.register(Alert, {
-            disabled: true,
-
             name: 'alert',
-            requires: [ 'mongo' ]
+            requires: [ 'influx', 'mongo' ],
+            events: [
+                {
+                    mod: 'influx',
+                    name: 'ready',
+                    call: 'ready'
+                },
+                {
+                    mod: 'mongo',
+                    name: 'ready',
+                    call: 'ready'
+                }
+            ]
         });
     }
 
@@ -19,25 +30,22 @@ export default class Alert extends BaseModule {
         return AlertModel;
     }
  
-    calculateAlerts(){
+    async calculateAlerts() {
+        const locations = await this.modules.location.model.getAll();
+        for (const location of locations) {
+            for (const building of location.buildings) {
+                for (const floor of building.floors) {
+                    for (const room of floor.rooms) {
+                        const tagString = location.tag+'.'+building.tag+'.'+floor.tag+'.'+room.tag;
+                        const data = await this.get(tagString, 10, 'co2eq_ppm');
 
-        
-
-        for (let location in locations) {
-            for (let building in location) {
-                for (let floor in building) {
-                    for (let room in floor) {
-                        let tagString = location.name+'.'+building.name+'.'+floor.name+'.'+room.name;
-                        let data = this.get(tagString, 10, 'co2eq_ppm')._result
-
-                        // NOG AFWERKEN ============================================================================================
-                        if(data._value > 200){
-                            this.log.Info('alerts', 'data works');
-                        }
+                        console.log(data);
                     }
                 }
             }
         }
+
+        setTimeout(this.calculateAlerts.bind(this), 3e5);
     }
 
 
@@ -45,19 +53,15 @@ export default class Alert extends BaseModule {
         const readAPI = this.modules.influx.read();
         
         return new Promise((resolve, reject) => {
-            const data = {};
+            const data = [];
 
             readAPI.queryRows(query, {
                 next: (row, tableMeta) => {
                     const o = tableMeta.toObject(row);
-
-                    if (!data[o._measurement])
-                        data[o._measurement] = [];
-                        
-                    data[o._measurement].push(o);
+                    data.push(o);
                 },
                 error: reject,
-                complete: () => resolve(data)
+                complete: () => resolve(data[0])
             });
         });
     }
@@ -89,19 +93,16 @@ export default class Alert extends BaseModule {
         }
 
         const query =
-        `from(bucket: "c02") ${constraints}
+        `from(bucket: "CO2") ${constraints}
         |> filter(fn: (r) => r["_measurement"] =~ /${tagString}.*/)
         |> mean()`;
 
         return this.query(query)
     }
 
-    init() {
-        setInterval(() => {
-            calculateAlerts(); 
-        }, 5*60000); // minutes*60000 to get milliseconds
-
-        return true;
+    ready() {
+        if (this._ready) this.calculateAlerts();
+        this._ready = true;
     }
 }
 
