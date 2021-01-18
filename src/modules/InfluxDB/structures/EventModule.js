@@ -1,15 +1,19 @@
-export default class BaseModule {
+import { EventEmitter } from 'events';
+
+export default class BaseModule extends EventEmitter {
     /**
      * @param {Main} main
      */
     constructor(main) {
+        super();
+
         this._m = main;
     }
 
     get auth() {
         return this._m.auth;
     }
-
+    
     get config() {
         return this._m.config;
     }

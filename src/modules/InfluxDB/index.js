@@ -1,7 +1,7 @@
-import BaseModule from './structures/BaseModule.js'
+import EventModule from './structures/EventModule.js'
 import { InfluxDB } from '@influxdata/influxdb-client'
 
-export default class Influx extends BaseModule {
+export default class Influx extends EventModule {
     _instance;
 
     constructor(main) {
@@ -10,8 +10,6 @@ export default class Influx extends BaseModule {
         this.register(Influx, {
             name: 'influx'
         });
-
-        this._instance = new InfluxDB({ url: this.auth.influx_db.url, token: this.auth.influx_db.token });
     }
 
     read() {
@@ -23,7 +21,11 @@ export default class Influx extends BaseModule {
     }
 
     init() {
+        this._instance = new InfluxDB({ url: this.auth.influx_db.url, token: this.auth.influx_db.token });
+
         this.log.info('INFLUX', 'Module initialized...');
+
+        this.emit('ready');
 
         return true;
     }
