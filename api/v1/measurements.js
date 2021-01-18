@@ -82,7 +82,7 @@ export default class Measurements extends Route {
         }
 
         const query =
-        `from(bucket: "c02") ${constraints}
+        `from(bucket: "CO2") ${constraints}
         |> filter(fn: (r) => r["_measurement"] =~ /${tagString}.*/)`;
 
         return request.accept(
