@@ -7,9 +7,9 @@ const users = new mongoose.Schema({
     uid: { type: String, default: uuidv4, unique: true },
     email: { type: String, required: true, unique: true },
     type: { type: String, required: true, enum: AccountTypes },
-    phone_number: { type: String, unique: true },
+    phone_number: { type: String, unique: true, sparse: true },
     disabled: { type: Boolean, default: false },
-    username: { type: String, unique: true },
+    username: { type: String, unique: true, sparse: true },
     permission: { type: String, enum: PermissionLevels, default: 'info'},
     password: String
 });
