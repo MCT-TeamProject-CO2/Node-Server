@@ -9,8 +9,11 @@ export default class Settings extends Route {
         return this.modules.settings;
     }
 
+    /**
+     * api/v1/settings
+     */
     get route() {
-        return '/settings';
+        return '';
     }
 
     /**
@@ -31,7 +34,7 @@ export default class Settings extends Route {
         if (!await this.isSessionValid(request, 'admin')) return request.reject(403);
 
         const body = await request.json();
-        if (!body || (!body.config && !body.email)) return request.reject(400);
+        if (!body || !body.config) return request.reject(400);
 
         const configurations = await this.settings.models.update(body);
 
