@@ -50,7 +50,7 @@ export default class Measurements extends Route {
 
         if (!start && !end) {
             const date = new Date();
-            date.setMinutes(date.getMinutes() - delta ? delta : 10);
+            date.setMinutes(date.getMinutes() - !isNaN(delta) ? delta : 10);
 
             constraints = `|> range(start: ${date.toISOString()})`;
         }
@@ -60,8 +60,6 @@ export default class Measurements extends Route {
 
             const startDate = new Date(parseInt(start));
             const endDate = new Date(parseInt(end));
-
-            if (startDate == 'Invalid Date' || endDate == 'Invalid Date') return request.reject(400);
 
             constraints = `|> range(start: ${startDate.toISOString()}, stop: ${endDate.toISOString()})`;
         }
