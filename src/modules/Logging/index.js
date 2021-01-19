@@ -15,6 +15,8 @@ export default class Logging extends BaseModule {
         return LoggingModel;
     }
 
+   
+
     /**
      * @param {string} level
      * @param {string} type 
