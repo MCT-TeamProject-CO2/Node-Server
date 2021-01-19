@@ -22,7 +22,7 @@ export default class Mail extends Route {
         const body = await request.json();
         if (!body) return request.reject(400);
 
-        this.mail.models.remove(body);
+        this.mail.model.remove(body);
 
         return request.accept(null, 202);
     }
@@ -33,7 +33,7 @@ export default class Mail extends Route {
     async get(request) {
         if (!await this.isSessionValid(request, 'admin')) return request.reject(403);
 
-        const configurations = await this.mail.models.query({});
+        const configurations = await this.mail.model.query({});
 
         return request.accept(configurations);
     }
@@ -58,7 +58,7 @@ export default class Mail extends Route {
             });
         }
 
-        if (!await this.mail.models.createIfNotExists(body)) {
+        if (!await this.mail.model.createIfNotExists(body)) {
             return request.accept({ success: false, message: 'There already exists a mail configuration with the given name.' });
         }
 

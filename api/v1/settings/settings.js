@@ -22,7 +22,7 @@ export default class Settings extends Route {
     async get(request) {
         if (!await this.isSessionValid(request, 'admin')) return request.reject(403);
 
-        const settings = await this.settings.models.query();
+        const settings = await this.settings.model.query();
 
         return request.accept(settings);
     }
@@ -36,7 +36,7 @@ export default class Settings extends Route {
         const body = await request.json();
         if (!body || !body.config) return request.reject(400);
 
-        const configurations = await this.settings.models.update(body);
+        const configurations = await this.settings.model.update(body);
 
         return request.accept(configurations);
     }

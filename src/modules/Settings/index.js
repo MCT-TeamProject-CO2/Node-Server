@@ -19,12 +19,12 @@ export default class Settings extends BaseModule {
         });
     }
 
-    get models() {
+    get model() {
         return SettingsModel;
     }
 
     async createSettings() {
-        if (await this.models.createIfNotExists())
+        if (await this.model.createIfNotExists())
             this.log.info('SETTINGS', 'Created settings object.');
         else
             this.log.verbose('SETTINGS', 'Settings object already exists, skipping...');

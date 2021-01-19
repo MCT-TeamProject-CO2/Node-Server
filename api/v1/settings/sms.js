@@ -22,10 +22,10 @@ export default class SMS extends Route {
         const body = await request.json();
         if (!body || !body.phoneNumber || !body.email) return request.reject(400);
 
-        let userObj = await this.modules.user.models.getUser(body.email);
+        let userObj = await this.modules.user.model.getUser(body.email);
         delete userObj.phoneNumber
 
-        if (!await this.modules.user.models.updateUser(userObj)){
+        if (!await this.modules.user.model.updateUser(userObj)){
             return request.reject(406, {
                 code: 406,
                 status: '406 - Not Acceptable',
@@ -43,7 +43,7 @@ export default class SMS extends Route {
     async get(request) {
         if (!await this.isSessionValid(request)) return request.reject(403);
 
-        const knownNumbers = await this.modules.user.models.query({phoneNumber: { $exists: true }});
+        const knownNumbers = await this.modules.user.model.query({phoneNumber: { $exists: true }});
 
         return request.accept(knownNumbers);
     }
@@ -57,10 +57,10 @@ export default class SMS extends Route {
         const body = await request.json();
         if (!body || !body.phoneNumber || !body.email) return request.reject(400);
 
-        let userObj = await this.modules.user.models.getUser(body.email);
+        let userObj = await this.modules.user.model.getUser(body.email);
         userObj.phoneNumber = body.phoneNumber;
 
-        if (!await this.modules.user.models.updateUser(userObj)){
+        if (!await this.modules.user.model.updateUser(userObj)){
             return request.reject(406, {
                 code: 406,
                 status: '406 - Not Acceptable',

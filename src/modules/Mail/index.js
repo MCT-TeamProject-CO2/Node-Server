@@ -21,7 +21,7 @@ export default class Mail extends BaseModule {
         });
     }
 
-    get models() {
+    get model() {
         return MailModel;
     }
 
@@ -31,7 +31,7 @@ export default class Mail extends BaseModule {
     async _updateConfigurations() {
         this._cache.clear();
 
-        const configurations = await this.models.query({});
+        const configurations = await this.model.query({});
 
         for (const configuration of configurations) {
             this._cache.set(configuration.name, this.createTransporter(configuration));
