@@ -26,20 +26,33 @@ export default class Alert extends BaseModule {
         });
     }
 
-    get models() {
+    /**
+     * @returns {AlertModel}
+     */
+    get model() {
         return AlertModel;
     }
  
     async calculateAlerts() {
+        const tresholds = (await this.modules.settings.model.query())[0].config.ppmThresholds;
+
         const locations = await this.modules.location.model.getAll();
         for (const location of locations) {
             for (const building of location.buildings) {
                 for (const floor of building.floors) {
                     for (const room of floor.rooms) {
                         const tagString = location.tag+'.'+building.tag+'.'+floor.tag+'.'+room.tag;
-                        const data = await this.get(tagString, 10, 'co2eq_ppm');
+                        const data = await this.get(tagString, 10, 'co2eq_ppm,humidity,temperature,tvoc_ppb');
 
-                        console.log(data);
+                        if (data && data.co2eq_ppm) {
+                            const ppm = data.co2eq_ppm;
+                            let code = 0;
+
+                            if (ppm >= tresholds.orange && ppm < tresholds.red) code = 1;
+                            else if (ppm > tresholds.red) code = 2;
+
+                            if (code !== 0) this.createAlert(tagString, code, data);
+                        }
                     }
                 }
             }
@@ -48,20 +61,52 @@ export default class Alert extends BaseModule {
         setTimeout(this.calculateAlerts.bind(this), 3e5);
     }
 
+    async createAlert(tagString, code, data) {
+        const doc = (await this.model.getLatestAlertForTagstring(tagString))[0];
+
+        if (doc) {
+            const date = new Date(doc.createdAt);
+
+            // Update if within the last 20 minutes
+            if (date.getTime() > Date.now() - 12e5) {
+                await this.model.updateId(doc._id, {
+                    code,
+    
+                    co2: data.co2eq_ppm,
+                    humidity: data.humidity,
+                    temperature: data.temperature,
+                    tvoc: data.tvoc_ppb
+                });
+
+                return;
+            }
+        }
+
+        this.model.create({
+            code,
+            tagString,
+
+            co2: data.co2eq_ppm,
+            humidity: data.humidity,
+            temperature: data.temperature,
+            tvoc: data.tvoc_ppb
+        });
+    }
 
     query(query) {
         const readAPI = this.modules.influx.read();
         
         return new Promise((resolve, reject) => {
-            const data = [];
+            const data = {};
 
             readAPI.queryRows(query, {
                 next: (row, tableMeta) => {
                     const o = tableMeta.toObject(row);
-                    data.push(o);
+                    
+                    data[o._field] = o._value;
                 },
-                error: reject,
-                complete: () => resolve(data[0])
+                error: () => resolve(null),
+                complete: () => resolve(data)
             });
         });
     }
@@ -93,11 +138,12 @@ export default class Alert extends BaseModule {
         }
 
         const query =
-        `from(bucket: "CO2") ${constraints}
-        |> filter(fn: (r) => r["_measurement"] =~ /${tagString}.*/)
+        `from(bucket: "CO2")
+        ${constraints}
+        |> filter(fn: (r) => r["_measurement"] == "${tagString}")
         |> mean()`;
 
-        return this.query(query)
+        return this.query(query);
     }
 
     ready() {
@@ -105,27 +151,3 @@ export default class Alert extends BaseModule {
         this._ready = true;
     }
 }
-
-
-// {
-//     "BCE.C.0.003": [
-//         {
-//             "result": "_result",
-//             "table": 0,
-//             "_start": "2021-01-14T19:10:08.979Z",
-//             "_stop": "2021-01-14T19:11:08.994243142Z",
-//             "_time": "2021-01-14T19:10:12Z",
-//             "_value": 445,
-//             "_field": "co2eq_ppm",
-//             "_measurement": "BCE.C.0.003"
-//         },
-//         {
-//             "result": "_result",
-//             "table": 0,
-//             "_start": "2021-01-14T19:10:08.979Z",
-//             "_stop": "2021-01-14T19:11:08.994243142Z",
-//             "_time": "2021-01-14T19:10:17Z",
-//             "_value": 452,
-//             "_field": "co2eq_ppm",
-//             "_measurement": "BCE.C.0.003"
-//         },
