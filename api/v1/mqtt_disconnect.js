@@ -12,6 +12,42 @@ export default class MqttDisconnect extends Route {
     /**
      * @param {Request} request 
      */
+    async get(request) {
+        if (!await this.isSessionValid(request)) return request.reject(403);
+
+        const searchParams = new URLSearchParams(request.searchParams);
+
+        const delta = searchParams.get('delta');
+        const start = searchParams.get('start');
+        const end = searchParams.get('end');
+
+        if (!start && !end) {
+            const date = new Date();
+
+            date.setMinutes(date.getMinutes() - delta ? delta : 10);
+            
+            return request.accept(
+                await this.modules.logging.model.getDelta(date)
+            );
+        }
+        else if (delta && (start || end)) return request.reject(400);
+        else if (start && end) {
+            if (isNaN(start) || isNaN(end)) return request.reject(400);
+
+            const startDate = new Date(parseInt(start));
+            const endDate = new Date(parseInt(end));
+
+            return request.accept(
+                await this.modules.logging.model.getInRange(startDate, endDate)
+            );
+        }        
+    }
+
+
+
+    /**
+     * @param {Request} request 
+     */
     async post(request) {
         const body = await request.json();
         if (!body || !body.message) return request.reject(400);
