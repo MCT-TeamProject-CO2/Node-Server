@@ -39,7 +39,7 @@ export const update = (update) => {
  * 
  */
 export const query = () => {
-    return SettingsSchema.find({ id: 1 }).exec();
+    return SettingsSchema.findOne({ id: 1 }).exec();
 };
 
 export default {
