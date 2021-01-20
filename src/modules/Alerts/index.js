@@ -34,7 +34,10 @@ export default class Alert extends BaseModule {
     }
  
     async calculateAlerts() {
-        const tresholds = (await this.modules.settings.model.query())[0].config.ppmThresholds;
+        if (!this.modules.settings.ready) return setTimeout(this.calculateAlerts.bind(this), 10);
+        const tresholds = this.modules.settings.cache.config.ppmThresholds;
+
+        this.log.verbose('ALERTS', 'Calculating thresholds.');
 
         const locations = await this.modules.location.model.getAll();
         for (const location of locations) {
