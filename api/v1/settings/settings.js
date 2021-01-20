@@ -37,6 +37,7 @@ export default class Settings extends Route {
         if (!body || !body.config) return request.reject(400);
 
         const configurations = await this.settings.model.update(body);
+        await this.modules.settings.updateCache();
 
         return request.accept(configurations);
     }
