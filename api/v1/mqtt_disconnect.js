@@ -54,6 +54,6 @@ export default class MqttDisconnect extends Route {
 
         this.modules.logging.push('warning', 'data_handler', 'The Python data handler encountered an error:', body.message);
 
-        return request.accept('', 204);
+        return request.accept('', 201);
     }
 }
