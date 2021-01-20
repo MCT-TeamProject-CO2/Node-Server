@@ -13,6 +13,11 @@ export default class Login extends Route {
      * @param {Request} request 
      */
     async post(request) {
+        // Check if the settings module has a cache available
+        if (!this.modules.settings.ready) return request.reject(403);
+        // Check if normal logging in is disabled
+        if (this.modules.settings.cache.config.disableNormalLogin) return request.reject(403);
+
         const body = await request.json();
         if (!body || (!body.username && !body.email) || !body.password) return request.reject(400);
 
