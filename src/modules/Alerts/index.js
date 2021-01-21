@@ -55,6 +55,8 @@ export default class Alert extends BaseModule {
                             else if (ppm > tresholds.red) code = 2;
 
                             if (code !== 0) this.createAlert(tagString, code, data);
+                            if (code == 2) await this.modules.smartplugs.toggle(tagString, true);
+                            if (code !== 2) await this.modules.smartplugs.toggle(tagString, false);
                         }
                     }
                 }
