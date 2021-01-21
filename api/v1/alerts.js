@@ -30,7 +30,7 @@ export default class Alerts extends Route {
 
         if (!start && !end) {
             const date = new Date();
-            date.setMinutes(date.getMinutes() - (isNaN(delta) ? 20 : delta));
+            date.setMinutes(date.getMinutes() - (!delta || isNaN(delta) ? 20 : delta));
 
             docs = await this.model.findBetweenDates(date);
         }
