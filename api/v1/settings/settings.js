@@ -10,7 +10,7 @@ export default class Settings extends Route {
     }
 
     /**
-     * api/v1/settings
+     * Route: /api/v1/settings
      */
     get route() {
         return '';
@@ -22,9 +22,9 @@ export default class Settings extends Route {
     async get(request) {
         if (!await this.isSessionValid(request, 'admin')) return request.reject(403);
 
-        const settings = await this.settings.model.query();
-
-        return request.accept(settings);
+        return request.accept(
+            await this.settings.model.query()
+        );
     }
 
     /**
@@ -34,11 +34,19 @@ export default class Settings extends Route {
         if (!await this.isSessionValid(request, 'admin')) return request.reject(403);
 
         const body = await request.json();
-        if (!body || !body.config) return request.reject(400);
+        if (!body) return request.reject(400);
 
-        const configurations = await this.settings.model.update(body);
-        await this.modules.settings.updateCache();
+        try {
+            const configuration = await this.settings.model.update(body);
+            await this.modules.settings.updateCache();
 
-        return request.accept(configurations);
+            return request.accept(configuration);
+        } catch (error) {
+            return request.reject(406, {
+                code: 406,
+                status: "406 - Not Acceptable",
+                message: error.message
+            });
+        }
     }
 }

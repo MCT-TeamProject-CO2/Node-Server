@@ -27,11 +27,11 @@ export const createIfNotExists = async (settings) => {
 
 /**
  * Find the config document and update it with an object
- * @param {SettingsSchema} update 
+ * @param {Object} config 
  */
-export const update = (update) => {
+export const update = (config) => {
     return SettingsSchema
-        .findOneAndUpdate({id: 1}, update, { new: true })
+        .findOneAndUpdate({ id: 1 }, { config }, { new: true })
         .exec();
 };
 
