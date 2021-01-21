@@ -1,7 +1,7 @@
 import mongoose from 'mongoose'
 
 const mailConfigs = new mongoose.Schema({
-    name: { type: String, required: true, unique: true },
+    name: { type: String, required: true, unique: true, default: "defaultConfig" },
     config: {
         pool: { type: Boolean, required: true },
         host: { type: String, required: true },

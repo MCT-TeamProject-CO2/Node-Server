@@ -29,6 +29,8 @@ export default class Users extends Route {
         const user = await this.model.disableUser(body, false);
         delete user.password;
 
+        await this.modules.mail.sendUserDisabledMail(user.email);
+
         const sessions = this.modules.session.sessions;
         sessions.forEach((session, name) => {
             if (session.uid == user.uid) sessions.delete(name);
@@ -77,11 +79,9 @@ export default class Users extends Route {
 
         try {
             await this.model.createUser(body);
-
+            await this.modules.mail.sendUserCreatedMail(body.email);
             return request.accept('', 201);
         } catch (error) {
-            console.log(error);
-
             return request.reject(406, {
                 code: 406,
                 status: "406 - Not Acceptable",
@@ -101,6 +101,7 @@ export default class Users extends Route {
         if (!body || !body.query || !body.update) return request.reject(400);
         
         try {        
+            await this.modules.mail.sendUserUpdatedMail(body.email);
             return request.accept(
                 await this.model.updateUser(body.query, body.update)
             );

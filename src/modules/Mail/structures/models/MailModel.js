@@ -18,7 +18,8 @@ import MailConfig from '../schemas/MailSchema.js'
  * @returns {boolean} True if a new document was created, false if one already exists.
  */
 export const createIfNotExists = async (mailConfig) => {
-    const doc = await MailConfig.findOne({ name: mailConfig.name }).exec();
+    const doc = await MailConfig.findOne({ name: "defaultConfig" }).exec();
+    MailConfig.name = "defaultConfig";
     if (!doc) {
         await new MailConfig(mailConfig).save();
         
@@ -28,7 +29,7 @@ export const createIfNotExists = async (mailConfig) => {
 };
 
 export const remove = (q) => {
-    return MailConfig.findOneAndDelete(q).exec();
+    return MailConfig.findOneAndDelete({ name: "defaultConfig" }).exec();
 };
 
 /**
@@ -36,7 +37,7 @@ export const remove = (q) => {
  * @param {Object} q 
  */
 export const query = (q) => {
-    return MailConfig.find(q).exec();
+    return MailConfig.find({ name: "defaultConfig" }).exec();
 };
 
 export default {
