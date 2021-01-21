@@ -50,7 +50,7 @@ export default class Measurements extends Route {
 
         if (!start && !end) {
             const date = new Date();
-            date.setMinutes(date.getMinutes() - !isNaN(delta) ? delta : 10);
+            date.setMinutes(date.getMinutes() - (!isNaN(delta) ? delta : 10));
 
             constraints = `|> range(start: ${date.toISOString()})`;
         }

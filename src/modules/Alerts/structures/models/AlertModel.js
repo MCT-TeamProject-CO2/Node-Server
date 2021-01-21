@@ -15,8 +15,6 @@ export const create = async (alert) => {
 };
 
 export const findBetweenDates = (start, end = new Date()) => {
-    console.log(end - start);
-
     return AlertSchema.find({
         createdAt: {
             $gte: start,
