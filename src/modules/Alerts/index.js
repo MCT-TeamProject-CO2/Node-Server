@@ -39,27 +39,20 @@ export default class Alert extends BaseModule {
 
         this.log.verbose('ALERTS', 'Calculating thresholds.');
 
-        const locations = await this.modules.location.model.getAll();
-        for (const location of locations) {
-            for (const building of location.buildings) {
-                for (const floor of building.floors) {
-                    for (const room of floor.rooms) {
-                        const tagString = location.tag+'.'+building.tag+'.'+floor.tag+'.'+room.tag;
-                        const data = await this.get(tagString, 10, 'co2eq_ppm,humidity,temperature,tvoc_ppb');
+        const data = await this.get(10, 'co2eq_ppm,humidity,temperature,tvoc_ppb');
 
-                        if (data && data.co2eq_ppm) {
-                            const ppm = data.co2eq_ppm;
-                            let code = 0;
+        for (const tagString in data) {
+            if (Object.hasOwnProperty.call(data, tagString)) {
+                const measurements = data[tagString];
+                const ppm = measurements.co2eq_ppm;
+                let code = 0;
+                
+                if (ppm >= tresholds.orange && ppm < tresholds.red) code = 1;
+                else if (ppm > tresholds.red) code = 2;
 
-                            if (ppm >= tresholds.orange && ppm < tresholds.red) code = 1;
-                            else if (ppm > tresholds.red) code = 2;
-
-                            if (code !== 0) this.createAlert(tagString, code, data);
-                            if (code == 2) await this.modules.smartplugs.toggle(tagString, true);
-                            if (code !== 2) await this.modules.smartplugs.toggle(tagString, false);
-                        }
-                    }
-                }
+                if (code !== 0) this.createAlert(tagString, code, measurements);
+                if (code == 2) await this.modules.smartplugs.toggle(tagString, true);
+                if (code !== 2) await this.modules.smartplugs.toggle(tagString, false);
             }
         }
 
@@ -108,7 +101,8 @@ export default class Alert extends BaseModule {
                 next: (row, tableMeta) => {
                     const o = tableMeta.toObject(row);
                     
-                    data[o._field] = o._value;
+                    if (!data[o._measurement]) data[o._measurement] = {};
+                    data[o._measurement][o._field] = o._value;
                 },
                 error: () => resolve(null),
                 complete: () => resolve(data)
@@ -119,7 +113,7 @@ export default class Alert extends BaseModule {
     /**
      * 
      */
-    async get(tagString, delta, fields) {
+    async get(delta, fields) {
         let constraints = '';
 
         const date = new Date();
@@ -145,7 +139,7 @@ export default class Alert extends BaseModule {
         const query =
         `from(bucket: "CO2")
         ${constraints}
-        |> filter(fn: (r) => r["_measurement"] == "${tagString}")
+        |> filter(fn: (r) => r["_measurement"] =~ /[a-zA-Z]{3}\.[a-zA-Z]\.-?[0-9]*\.[0-9]{3}/)
         |> mean()`;
 
         return this.query(query);
