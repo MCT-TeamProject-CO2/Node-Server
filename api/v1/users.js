@@ -1,4 +1,5 @@
 import Route from '~/src/structures/routes/Route.js'
+import bcrypt from 'bcrypt'
 
 /**
  * Route: /api/v1/users
@@ -100,11 +101,52 @@ export default class Users extends Route {
         const body = await request.json();
         if (!body || !body.query || !body.update) return request.reject(400);
         
+        const session = await this.modules.session.getSession(request.headers['authorization']);
+        const user = session.user;
+
+        const docToUpdate = await this.model.getUser(body.query, true);
+        const updateSelf = user.email == body.query.email
+            || user.username == body.query.username
+            || user.uid == body.query.uid;
+        if (body.update.password) {
+            if (updateSelf) {
+                if (!body.update.old_password) {
+                    return request.accept({
+                        succes: false,
+                        data: 'Please give your old password to update your password.'
+                    });
+                }
+
+                if (!await bcrypt.compare(body.update.old_password, docToUpdate.password)) return request.accept({
+                    succes: false,
+                    message: 'Password not updated, the given old password did not match what was stored.'
+                });
+            }
+        }
+
+        if (body.update.permission) {
+            const permissionLevels = this.modules.user.constants.PermissionLevels;
+            
+            if (updateSelf) {
+                if (permissionLevels.indexOf(session.permLevel) <= permissionLevels.indexOf(docToUpdate.permission)) return request.accept({
+                    succes: false,
+                    message: 'You can\'t update your permission level to a higher level.'
+                });
+            }
+            else {
+                if (permissionLevels.indexOf(session.permLevel) < permissionLevels.indexOf(body.update.permission)) return request.accept({
+                    succes: false,
+                    message: 'You can\'t update user permissions of others to a higher level than yours.'
+                });
+            }
+        }
+
         try {        
-            await this.modules.mail.sendUserUpdatedMail(body.email);
-            return request.accept(
-                await this.model.updateUser(body.query, body.update)
-            );
+            await this.modules.mail.sendUserUpdatedMail(user.email);
+            return request.accept({
+                succes: true,
+                data: await this.model.updateUser(body.query, body.update)
+            });
         } catch (error) {
             return request.reject(406, {
                 code: 406,
