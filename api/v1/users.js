@@ -96,7 +96,7 @@ export default class Users extends Route {
      * @param {Request} request 
      */
     async put(request) {
-        if (!await this.isSessionValid(request, 'admin')) return request.reject(403);
+        if (!await this.isSessionValid(request)) return request.reject(403);
 
         const body = await request.json();
         if (!body || !body.query || !body.update) return request.reject(400);
@@ -112,16 +112,21 @@ export default class Users extends Route {
             if (updateSelf) {
                 if (!body.update.old_password) {
                     return request.accept({
-                        succes: false,
+                        success: false,
                         data: 'Please give your old password to update your password.'
                     });
                 }
 
                 if (!await bcrypt.compare(body.update.old_password, docToUpdate.password)) return request.accept({
-                    succes: false,
+                    success: false,
                     message: 'Password not updated, the given old password did not match what was stored.'
                 });
             }
+
+            if (body.update.password.length < 6) return request.accept({
+                success: false,
+                message: 'New password is too short.'
+            });
         }
 
         if (body.update.permission) {
@@ -129,13 +134,13 @@ export default class Users extends Route {
             
             if (updateSelf) {
                 if (permissionLevels.indexOf(session.permLevel) <= permissionLevels.indexOf(docToUpdate.permission)) return request.accept({
-                    succes: false,
+                    success: false,
                     message: 'You can\'t update your permission level to a higher level.'
                 });
             }
             else {
                 if (permissionLevels.indexOf(session.permLevel) < permissionLevels.indexOf(body.update.permission)) return request.accept({
-                    succes: false,
+                    success: false,
                     message: 'You can\'t update user permissions of others to a higher level than yours.'
                 });
             }
@@ -144,7 +149,7 @@ export default class Users extends Route {
         try {        
             await this.modules.mail.sendUserUpdatedMail(user.email);
             return request.accept({
-                succes: true,
+                success: true,
                 data: await this.model.updateUser(body.query, body.update)
             });
         } catch (error) {
