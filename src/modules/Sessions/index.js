@@ -58,7 +58,9 @@ export default class Sessions extends BaseModule {
 
         session = await this.model.getSession(sessionId);
         if (session) {
-            const user = await this.modules.user.model.getUser({ uid: session.uid });
+            const user = session.is_token
+                ? null
+                : await this.modules.user.model.getUser({ uid: session.uid });
             session = new Session(this, sessionId, user);
 
             this.sessions.set(sessionId, session);
