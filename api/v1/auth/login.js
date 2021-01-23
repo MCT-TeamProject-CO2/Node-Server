@@ -15,12 +15,12 @@ export default class Login extends Route {
     async post(request) {
         // Check if the settings module has a cache available
         if (!this.modules.settings.ready) return request.accept({
-            succes: false,
+            success: false,
             data: 'Try logging in again later.'
         });
         // Check if normal logging in is disabled
         if (this.modules.settings.cache.config.disableNormalLogin) return request.accept({
-            succes: false,
+            success: false,
             data: 'Normal login has been disable by system administrators, try logging in with your Microsoft account.'
         });
 
@@ -32,17 +32,17 @@ export default class Login extends Route {
 
         const user = await this.modules.user.model.getUser(body, true);
         if (!user || user.disabled) return request.accept({
-            succes: false,
+            success: false,
             data: 'Unknown username/email given or invalid password entered.'
         });
 
         if (!await this.modules.session.verifyHash(password, user.password)) return request.accept({
-            succes: false,
+            success: false,
             data: 'Unknown username/email given or invalid password entered.'
         });
 
         return request.accept({
-            succes: true,
+            success: true,
             data: {
                 sessionId: await this.modules.session.createSession(user)
             }
