@@ -19,13 +19,6 @@ users.pre('save', async function() {
 });
 users.pre('findOneAndUpdate', async function() {
     if (this._update.password) {
-        if (!this._update.old_password) throw new Error('There was no "old_password" key found to verify the update to the user.');
-
-        const docToUpdate = await this.model.findOne(this.getQuery());
-
-        if (!await bcrypt.compare(this._update.old_password, docToUpdate.password)) throw new Error('Password not updated, the given old password did not match what was stored.');
-    
-        delete this._update.old_password;
         this._update.password = await bcrypt.hash(this._update.password, SaltRounds);
     }
 });
