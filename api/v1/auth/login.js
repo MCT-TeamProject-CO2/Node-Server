@@ -14,9 +14,15 @@ export default class Login extends Route {
      */
     async post(request) {
         // Check if the settings module has a cache available
-        if (!this.modules.settings.ready) return request.reject(403);
+        if (!this.modules.settings.ready) return request.accept({
+            succes: false,
+            data: 'Try logging in again later.'
+        });
         // Check if normal logging in is disabled
-        if (this.modules.settings.cache.config.disableNormalLogin) return request.reject(403);
+        if (this.modules.settings.cache.config.disableNormalLogin) return request.accept({
+            succes: false,
+            data: 'Normal login has been disable by system administrators, try logging in with your Microsoft account.'
+        });
 
         const body = await request.json();
         if (!body || (!body.username && !body.email) || !body.password) return request.reject(400);
@@ -25,14 +31,21 @@ export default class Login extends Route {
         delete body.password;
 
         const user = await this.modules.user.model.getUser(body, true);
-        if (!user || user.disabled) request.reject(403);
+        if (!user || user.disabled) return request.accept({
+            succes: false,
+            data: 'Unknown username/email given or invalid password entered.'
+        });
 
-        if (!await this.modules.session.verifyHash(password, user.password)) {
-            return request.reject(403);
-        }
+        if (!await this.modules.session.verifyHash(password, user.password)) return request.accept({
+            succes: false,
+            data: 'Unknown username/email given or invalid password entered.'
+        });
 
         return request.accept({
-            sessionId: await this.modules.session.createSession(user)
+            succes: true,
+            data: {
+                sessionId: await this.modules.session.createSession(user)
+            }
         });
     }
 }
