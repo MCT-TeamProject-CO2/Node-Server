@@ -10,7 +10,7 @@ export default class Users extends Route {
     }
 
     get route() {
-        return '/users';
+        return '';
     }
 
     get model() {
@@ -121,6 +121,8 @@ export default class Users extends Route {
                     success: false,
                     message: 'Password not updated, the given old password did not match what was stored.'
                 });
+
+                delete body.update.old_password;
             }
 
             if (body.update.password.length < 6) return request.accept({
