@@ -42,16 +42,11 @@ export default class ResetUserPassword extends Route {
         });
 
         const randomPass = crypto.randomBytes(32).toString('base64');
-        await this.model.updateUser(body.query, { password: randomPass });
 
         try {
-            await this.modules.mail.createMessage(
-                this.modules.mail.sender,
-                target.email,
-                "Password Reset",
-                "An administrator has reset your Howest Air Quality account. \nTry logging in again with the following credentials.\nEmail: " + target.email + "\nPassword: "+ randomPass + "\n\nAfter logging in you should go to settings to reset your password to something you can remember.",
-                "An administrator has reset your Howest Air Quality account. \nTry logging in again with the following credentials.\nEmail: " + target.email + "\nPassword: "+ randomPass + "\n\nAfter logging in you should go to settings to reset your password to something you can remember."
-            );
+            await this.model.updateUser(body.query, { password: randomPass });
+
+            await this.modules.mail.sendUserResetMail(target.email, randomPass);
 
             return request.accept({
                 success: true
