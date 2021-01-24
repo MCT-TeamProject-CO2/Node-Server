@@ -99,6 +99,23 @@ export default class Mail extends BaseModule {
         return transporter.verify();
     }
 
+    async sendUserResetMail(email, password) {
+        const transporter = this.createTransporter(this.config);
+        const verified = this.verifyTransporter(transporter);
+
+        if (verified) {
+            const message = await this.createMessage(
+                this.modules.mail.sender,
+                email,
+                "Password Reset",
+                "An administrator has reset your Howest Air Quality account.\r\nTry logging in again with the following credentials.\r\nEmail: " + email + "\r\nPassword: "+ password + "\r\n\r\nAfter logging in you should go to settings to reset your password to something you can remember.",
+                "An administrator has reset your Howest Air Quality account. <br/><br/>Try logging in again with the following credentials.<br/>Email: <b>" + email + "</b><br/>Password: <b>"+ password + "</b><br/><br/>After logging in you should go to settings to reset your password to something you can remember."       
+            );
+
+            const result = await this.sendMail(transporter, message);
+        }
+    }
+
     async sendUserDisabledMail(email) {
         const transporter = this.createTransporter(this.config);
         const verified = this.verifyTransporter(transporter);
