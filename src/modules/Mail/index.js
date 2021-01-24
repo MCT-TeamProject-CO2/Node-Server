@@ -99,41 +99,32 @@ export default class Mail extends BaseModule {
         return transporter.verify();
     }
 
-    async sendUserDisabledMail(email){
-        // const config = this.auth.mail;
-        // const sender = config.email;
-        // delete config.email;
-        // console.log(config);
+    async sendUserDisabledMail(email) {
         const transporter = this.createTransporter(this.config);
         const verified = this.verifyTransporter(transporter);
-        if(verified){
-            const message = await this.createMessage(this.sender, email, "Disabled Account", "This account has been disabled from accessing Howest Air Quality Dashboard.", "This account has been disabled from accessing Howest Air Quality Dashboard.");
+
+        if(verified) {
+            const message = await this.createMessage(this.sender, email, "Disabled Account", "Your account has been disabled from accessing the Howest Air Quality Dashboard.", "Your account has been disabled from accessing the Howest Air Quality Dashboard.");
             const result = await this.sendMail(transporter, message);
         }
     }
 
-    async sendUserCreatedMail(email){
-        // const config = this.auth.mail;
-        // const sender = config.email;
-        // delete config.email;
-        // console.log(config);
+    async sendUserCreatedMail(email) {
         const transporter = this.createTransporter(this.config);
         const verified = this.verifyTransporter(transporter);
-        if(verified){
-            const message = await this.createMessage(this.sender, email, "Created Account", "An account with this email has been created on Howest Air Quality Dashboard.", "An account with this email has been created on Howest Air Quality Dashboard.");
+
+        if(verified) {
+            const message = await this.createMessage(this.sender, email, "Created Account", "An account has been created on the Howest Air Quality Dashboard with this email.", "An account has been created on the Howest Air Quality Dashboard with this email.");
             const result = await this.sendMail(transporter, message);
         }
     }
 
-    async sendUserUpdatedMail(email){
-        // const config = this.auth.mail;
-        // const sender = config.email;
-        // delete config.email;
-        // console.log(config);
+    async sendUserUpdatedMail(email) {
         const transporter = this.createTransporter(this.config);
         const verified = this.verifyTransporter(transporter);
-        if(verified){
-            const message = await this.createMessage(this.sender, email, "Updated Account", "This Howest Air Quality account has been updated.", "This Howest Air Quality account has been updated.");
+
+        if(verified) {
+            const message = await this.createMessage(this.sender, email, "Updated Account", "Your Howest Air Quality account has been updated.", "Your Howest Air Quality account has been updated.");
             const result = await this.sendMail(transporter, message);
         }
     }
