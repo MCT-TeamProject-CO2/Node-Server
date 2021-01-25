@@ -7,37 +7,11 @@ export const createIfNotExists = (location) => {
 /**
  * Return all documents that match a query
  * @param {Object} q 
+ * @param {Number} [svg = 0] If SVG's should be returned, default 0, 1 to return SVG's
  * @returns {Promise<Array<LocationSchema>>}
  */
-export const getAll = (q = {}) => {
-    return LocationSchema.find(q).exec();
-};
-
-/**
- * 
- * @param {string} string 
- */
-export const getRoomForTagString = async (tagString) => {
-    // Location.Building.Floor.Room
-    // KWE.A.0.104
-
-    const [ location, building, floor, room ] = tagString.split('.');
-
-    let data = await LocationSchema.findOne({
-        tag: location
-    }).exec();
-
-    const obj = { location: data.name };
-
-    data = data.buildings.find((el) => el.tag == building);
-    obj.building = data.name;
-
-    data = data.floors.find((el) => el.tag == floor);
-    obj.floor = data.name;
-
-    const { tag, name, position } = data.rooms.find((el) => el.tag == room)
-
-    return Object.assign(obj, { tag, name, position }, { tagString });
+export const getAll = (q = {}, svg = 0) => {
+    return LocationSchema.find(q, { floor_plans: { svg } }).exec();
 };
 
 /**
@@ -52,6 +26,5 @@ export const update = (q, location) => {
 export default {
     createIfNotExists,
     getAll,
-    getRoomForTagString,
     update
 };
