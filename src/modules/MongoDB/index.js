@@ -25,7 +25,8 @@ export default class MongoDB extends EventModule {
 
         if (this.config.development) {
             mongoose.set('debug', (collectionName, method, query, doc) => {
-                this.log.verbose('MONGO', `${collectionName}.${method} ${JSON.stringify(query)}`, doc);
+                if (query.length < 512)
+                    this.log.verbose('MONGO', `${collectionName}.${method} ${JSON.stringify(query)}`, doc);
             });
         }
 
