@@ -1,17 +1,29 @@
+import FloorPlanSchema from '../schemas/FloorPlanSchema.js'
 import LocationSchema from '../schemas/LocationSchema.js'
 
 export const createIfNotExists = (location) => {
     return new LocationSchema(location).save();
 };
 
+export const createSvgDocument = (floorPlan) => {
+    return new FloorPlanSchema(floorPlan).save();
+};
+
+export const get = (q) => {
+    return LocationSchema.findOne(q).exec();
+};
+
 /**
  * Return all documents that match a query
- * @param {Object} q 
- * @param {Number} [svg = 0] If SVG's should be returned, default 0, 1 to return SVG's
+ * @param {Object} q
  * @returns {Promise<Array<LocationSchema>>}
  */
-export const getAll = (q = {}, svg = 0) => {
-    return LocationSchema.find(q, { floor_plans: { svg } }).exec();
+export const getAll = (q = {}) => {
+    return LocationSchema.find(q).exec();
+};
+
+export const getSvgById = (id) => {
+    return FloorPlanSchema.findById(id).exec();
 };
 
 /**
@@ -23,8 +35,16 @@ export const update = (q, location) => {
     return LocationSchema.findOneAndUpdate(q, location, { new: true }).exec();
 };
 
+export const updateSvgDocument = (q, floorPlan) => {
+    return FloorPlanSchema.findOneAndUpdate(q, floorPlan, { new: true }).exec();
+};
+
 export default {
     createIfNotExists,
+    createSvgDocument,
+    get,
     getAll,
-    update
+    getSvgById,
+    update,
+    updateSvgDocument
 };
