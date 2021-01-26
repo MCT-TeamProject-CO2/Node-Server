@@ -46,8 +46,6 @@ export default class Measurements extends Route {
         // Default mean to true so bandwidth load is saved
         const mean = searchParams.has('mean') ? (searchParams.get('mean') == "false" ? false : true) : false;
 
-        console.log(mean);
-
         if (!tagString) return request.reject(400);
 
         let constraints = '';
