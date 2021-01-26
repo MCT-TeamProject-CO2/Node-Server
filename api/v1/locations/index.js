@@ -70,6 +70,13 @@ export default class Location extends Route {
     async get(request) {
         if (!await this.isSessionValid(request)) return request.reject(403);
 
+        const searchParams = new URLSearchParams(request.searchParams);
+        const tag = searchParams.get('tag');
+
+        if (tag) return request.accept(
+            await this.model.get({ tag })
+        );
+
         return request.accept(
             await this.model.getAll()
         );
