@@ -168,10 +168,18 @@ export default class Location extends Route {
                 const floorPlan = data.floor_plan[i];
                 
                 if (floorPlan.length > 64) {
-                    const floorPlanSchema = await this.model.updateSvgDocument(location.floor_plans[i].id, {
-                        tag: floorNum,
-                        svg: floorPlan
-                    });
+                    let floorPlanSchema;
+
+                    if (location.floor_plans[i])
+                        floorPlanSchema = await this.model.updateSvgDocument({ _id: location.floor_plans[i].id }, {
+                            tag: floorNum,
+                            svg: floorPlan
+                        });
+                    else
+                        floorPlanSchema = await this.model.createSvgDocument({
+                            tag: floorNum,
+                            svg: floorPlan
+                        });
 
                     locationSchema.floor_plans.push({
                         tag: floorNum,
