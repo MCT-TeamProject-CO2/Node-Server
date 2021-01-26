@@ -63,6 +63,30 @@ export default class Location extends Route {
         });
     }
 
+    async delete(request) {
+        if (!await this.isSessionValid(request, 'admin')) return request.reject(403);
+
+        const body = await request.json();
+        if (!body) return request.reject(400);
+
+        try {
+            const location = await this.model.get(body);
+
+            for (const floorPlan of location.floor_plans) 
+                await this.model.deleteFloorPlan({ _id: floorPlan.id });
+
+            await this.model.deleteLocation(body);
+        } catch (error) {
+            return request.reject(406, {
+                code: 406,
+                status: "406 - Not Acceptable",
+                message: error.message
+            });
+        }
+
+        return request.accept('', 204);
+    }
+
     /**
      * 
      * @param {Request} request 
