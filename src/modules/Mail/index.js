@@ -147,7 +147,7 @@ export default class Mail extends BaseModule {
     }
 
     async sendMailAlerts(alert){
-        const users = this.modules.user.model.getUsers();
+        const users = await this.modules.user.model.getUsers();
         for(const user of users){
             if (user.config.mailNotifications == true){
                 const transporter = this.createTransporter(this.config);
