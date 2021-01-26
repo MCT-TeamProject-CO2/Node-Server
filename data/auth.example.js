@@ -27,6 +27,9 @@ export default {
             useCreateIndex: true
         }
     },
+    ms_teams:{ 
+        WebHookUrl:""
+    },
     tp_link: {
         email: "",
         password: ""
