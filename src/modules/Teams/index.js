@@ -1,6 +1,5 @@
 import BaseModule from './structures/BaseModule.js'
 import fetch from 'node-fetch'
-import { WebHookUrl } from './util/Constants.js'
 
 export default class Teams extends BaseModule {
     constructor(main) {

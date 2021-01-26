@@ -13,8 +13,8 @@ const users = new mongoose.Schema({
     permission: { type: String, enum: PermissionLevels, default: 'info'},
     password: String,
     config: {
-        mailNotifications: { type: boolean, default: false },
-        smsNotifications: { type: boolean, default: false}
+        mailNotifications: { type: Boolean, default: false },
+        smsNotifications: { type: Boolean, default: false}
     }
 });
 
