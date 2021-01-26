@@ -9,6 +9,14 @@ export const createSvgDocument = (floorPlan) => {
     return new FloorPlanSchema(floorPlan).save();
 };
 
+export const deleteLocation = (q) => {
+    return LocationSchema.deleteOne(q).exec();
+};
+
+export const deleteFloorPlan = (q) => {
+    return LocationSchema.deleteOne(q).exec();
+};
+
 export const get = (q) => {
     return LocationSchema.findOne(q).exec();
 };
@@ -42,6 +50,8 @@ export const updateSvgDocument = (q, floorPlan) => {
 export default {
     createIfNotExists,
     createSvgDocument,
+    deleteLocation,
+    deleteFloorPlan,
     get,
     getAll,
     getSvgById,
