@@ -92,9 +92,9 @@ export default class Alert extends BaseModule {
 
         this.model.create(alertSchema);
 
-        await this.modules.mail.sendMailAlerts(alertSchema);
-        await this.modules.teams.postAlertToTeams(alertSchema);
-        await this.modules.sms.sendSmsAlerts(alertSchema);
+        await this.modules.mail?.sendMailAlerts(alertSchema);
+        await this.modules.teams?.postAlertToTeams(alertSchema);
+        await this.modules.sms?.sendSmsAlerts(alertSchema);
     }
 
     query(query) {
