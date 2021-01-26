@@ -146,6 +146,28 @@ export default class Mail extends BaseModule {
         }
     }
 
+    async sendMailAlerts(alert){
+        const users = this.modules.user.model.getUsers();
+        for(const user of users){
+            if (user.config.mailNotifications == true){
+                const transporter = this.createTransporter(this.config);
+                const verified = this.verifyTransporter(transporter);
+
+                if (verified) {
+                    const message = await this.createMessage(
+                        this.sender,
+                        user.email,
+                        `Alert for ${alert.tagString}`,
+                        `${alert.tagString} has reached CO2 levels of ${alert.co2} ppm.\r\n Code: ${'Red' ? code == 2 : 'Orange'}.\r\n Automatic ventilation is activated if available.`,
+                        `${alert.tagString} has reached CO2 levels of ${alert.co2} ppm.<br/> Code: ${'Red' ? code == 2 : 'Orange'}.<br/> Automatic ventilation is activated if available.`       
+                    );
+
+                const result = await this.sendMail(transporter, message);
+                }
+            }
+        }
+    }
+
     async init(){
         const tempconfig = this.auth.mail;
         this.sender = tempconfig.email;

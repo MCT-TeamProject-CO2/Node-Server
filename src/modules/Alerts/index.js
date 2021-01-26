@@ -75,7 +75,7 @@ export default class Alert extends BaseModule {
                     temperature: data.temperature,
                     tvoc: data.tvoc_ppb
                 });
-
+                  
                 return;
             }
         }
@@ -89,6 +89,11 @@ export default class Alert extends BaseModule {
             temperature: data.temperature,
             tvoc: data.tvoc_ppb
         });
+
+        doc = (await this.model.getLatestAlertForTagstring(tagString))[0];
+        await this.modules.mail.sendMailAlerts(doc);
+        await this.modules.teams.postAlertToTeams(doc);
+        await this.modules.sms.sendSmsAlerts(doc);
     }
 
     query(query) {
@@ -137,7 +142,7 @@ export default class Alert extends BaseModule {
         }
 
         const query =
-        `from(bucket: "CO2")
+        `from(bucket: "${this.auth.influx_db.bucket}")
         ${constraints}
         |> filter(fn: (r) => r["_measurement"] =~ /[a-zA-Z]{3}\.[a-zA-Z]\.-?[0-9]*\.[0-9]{3}/)
         |> mean()`;

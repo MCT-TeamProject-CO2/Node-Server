@@ -11,7 +11,11 @@ const users = new mongoose.Schema({
     disabled: { type: Boolean, default: false },
     username: { type: String, unique: true, sparse: true },
     permission: { type: String, enum: PermissionLevels, default: 'info'},
-    password: String
+    password: String,
+    config: {
+        mailNotifications: { type: boolean, default: false },
+        smsNotifications: { type: boolean, default: false}
+    }
 });
 
 users.pre('save', async function() {

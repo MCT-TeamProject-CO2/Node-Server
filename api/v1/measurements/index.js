@@ -45,6 +45,8 @@ export default class Measurements extends Route {
         const fields = searchParams.get('fields');
         // Default mean to true so bandwidth load is saved
         const mean = searchParams.has('mean') ? (searchParams.get('mean') == "false" ? false : true) : false;
+        // Combine data points
+        const aggregate = searchParams.has('aggregate') ? searchParams.get('aggregate') : '5s';
 
         if (!tagString) return request.reject(400);
 
@@ -82,8 +84,9 @@ export default class Measurements extends Route {
         }
 
         const query =
-        `from(bucket: "CO2") ${constraints}
+        `from(bucket: "${this.auth.influx_db.bucket}") ${constraints}
         |> filter(fn: (r) => r["_measurement"] =~ /${tagString}.*/)
+        |> aggregateWindow(every: ${aggregate}, fn: mean, createEmpty: false)
         ${mean ? '|> yield(name: "mean")' : ''}`;
 
         return request.accept(

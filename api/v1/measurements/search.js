@@ -36,7 +36,7 @@ export default class MeasurementSearch extends Route {
 
         const results = await this.query(
             `import "influxdata/influxdb/v1"
-            v1.measurements(bucket: "CO2")`
+            v1.measurements(bucket: "${this.auth.influx_db.bucket}")`
         );
 
         const result = results.filter(row => /[a-zA-Z]{3}\.[a-zA-Z]\.-?[0-9]*\.[0-9]{3}/.test(row) && row.includes(search));

@@ -7,7 +7,7 @@ export default class Teams extends BaseModule {
         super(main);
 
         this.register(Teams, {
-            disabled: false,
+            disabled: true,
             name: 'teams'
         });
     }
@@ -18,8 +18,6 @@ export default class Teams extends BaseModule {
      * @param {string} message 
      */
     async postMessageToTeams(title, message) {
-        title = "Testbericht Alert systeem";
-        message = "This test message is sent in NODEJS - by Groep 1";
         const card = {
             '@type': 'MessageCard',
             '@context': 'http://schema.org/extensions',
@@ -35,7 +33,7 @@ export default class Teams extends BaseModule {
 
         const body = JSON.stringify(card);
 
-        const res = await fetch(WebHookUrl, {
+        const res = await fetch(this.WebHookUrl, {
             headers: {
                 'Content-Type': 'application/vnd.microsoft.teams.card.o365connector',
                 'Content-Length': `${body.length}`
@@ -46,8 +44,14 @@ export default class Teams extends BaseModule {
         return res.ok;
     }
 
+    async postAlertToTeams(alert){
+        const title = `${alert.tagString} code ${'Red' ? code == 2 : 'Orange'}`;
+        const message = `CO2: ${alert.co2} ppm \n Humidity: ${alert.humidity}% \n Temperature: ${alert.temperature}°C \n TVOC: ${alert.tvoc} ppb`;
+        await this.postMessageToTeams(title, message);
+    }
+
     async init() {
-        await this.postMessageToTeams("s", "s");
+        this.WebHookUrl = this.auth.ms_teams.WebHookUrl;
         return true;
     }
 

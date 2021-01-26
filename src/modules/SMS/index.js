@@ -14,18 +14,12 @@ export default class SMS extends BaseModule {
         });
     }
 
-    async init() {
-        // let message = this.createMessages("32476067619", "test123");
-        // let test = await this.sendTextMessages(message);
-        return true;
-    }
-
     /**
      * 
      * @param {Array<string>|string} numbers 
      * @param {string} messages 
      */
-    createMessages(numbers, message) {
+    async createMessages(numbers, message) {
         let messages = [];
         if (numbers instanceof Array) {
             for(const number of numbers) {
@@ -65,5 +59,20 @@ export default class SMS extends BaseModule {
             body: JSON.stringify({ messages })
         });
         return res.ok;
+    }
+
+    async sendSmsAlerts(alert){
+        const users = this.modules.user.model.getUsers();
+        const numbers = [];
+        for(const user of users){
+            if (user.config.smsNotifications == true && user.phone_number){
+                numbers.push(user.phone_number);
+                }
+            }
+
+        const messages = await this.createMessages(numbers,
+            `${alert.tagString} has reached CO2 levels of ${alert.co2} ppm.\r\n Code: ${'Red' ? code == 2 : 'Orange'}.\r\n Automatic ventilation is activated if available.`     
+        );
+        await sendTextMessages(messages);
     }
 }
