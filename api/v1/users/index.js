@@ -78,9 +78,24 @@ export default class Users extends Route {
         const body = await request.json();
         if (!body) return request.reject(400);
 
+        let description;
+        if (body.type === 'normal') {
+            const randomPass = crypto.randomBytes(32).toString('base64');
+            body.password = randomPass;
+
+            description = `An administrator has added you to the Howest Air Quality Dashboard.\r\n\r\nYour login credentials are:\r\nEmail: ${body.email}\r\nPassword: ${randomPass}`;
+        }
+        else {
+            delete body.username;
+            delete body.password;
+
+            description = `An administrator has added you to the Howest Air Quality Dashboard.\r\n\r\nYou must use your Microsoft account associated with this email to login.`;
+        }
+
         try {
             await this.model.createUser(body);
-            await this.modules.mail.sendUserCreatedMail(body.email);
+            await this.modules.mail.sendUserCreatedMail(body.email, description);
+
             return request.accept('', 201);
         } catch (error) {
             return request.reject(406, {
