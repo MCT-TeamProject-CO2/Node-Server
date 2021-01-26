@@ -126,12 +126,18 @@ export default class Mail extends BaseModule {
         }
     }
 
-    async sendUserCreatedMail(email) {
+    async sendUserCreatedMail(email, description) {
         const transporter = this.createTransporter(this.config);
         const verified = this.verifyTransporter(transporter);
 
         if(verified) {
-            const message = await this.createMessage(this.sender, email, "Created Account", "An account has been created on the Howest Air Quality Dashboard with this email.", "An account has been created on the Howest Air Quality Dashboard with this email.");
+            const message = await this.createMessage(
+                this.sender,
+                email,
+                "Created Account",
+                description,
+                description.replace('\r\n', '<br/>')
+            );
             const result = await this.sendMail(transporter, message);
         }
     }
@@ -147,7 +153,7 @@ export default class Mail extends BaseModule {
     }
 
     async sendMailAlerts(alert){
-        const users = this.modules.user.model.getUsers();
+        const users = await this.modules.user.model.getUsers();
         for(const user of users){
             if (user.config.mailNotifications == true){
                 const transporter = this.createTransporter(this.config);

@@ -63,12 +63,43 @@ export default class Location extends Route {
         });
     }
 
+    async delete(request) {
+        if (!await this.isSessionValid(request, 'admin')) return request.reject(403);
+
+        const body = await request.json();
+        if (!body) return request.reject(400);
+
+        try {
+            const location = await this.model.get(body);
+
+            for (const floorPlan of location.floor_plans) 
+                await this.model.deleteFloorPlan({ _id: floorPlan.id });
+
+            await this.model.deleteLocation(body);
+        } catch (error) {
+            return request.reject(406, {
+                code: 406,
+                status: "406 - Not Acceptable",
+                message: error.message
+            });
+        }
+
+        return request.accept('', 204);
+    }
+
     /**
      * 
      * @param {Request} request 
      */
     async get(request) {
         if (!await this.isSessionValid(request)) return request.reject(403);
+
+        const searchParams = new URLSearchParams(request.searchParams);
+        const tag = searchParams.get('tag');
+
+        if (tag) return request.accept(
+            await this.model.get({ tag })
+        );
 
         return request.accept(
             await this.model.getAll()
@@ -161,10 +192,18 @@ export default class Location extends Route {
                 const floorPlan = data.floor_plan[i];
                 
                 if (floorPlan.length > 64) {
-                    const floorPlanSchema = await this.model.updateSvgDocument(location.floor_plans[i].id, {
-                        tag: floorNum,
-                        svg: floorPlan
-                    });
+                    let floorPlanSchema;
+
+                    if (location.floor_plans[i])
+                        floorPlanSchema = await this.model.updateSvgDocument({ _id: location.floor_plans[i].id }, {
+                            tag: floorNum,
+                            svg: floorPlan
+                        });
+                    else
+                        floorPlanSchema = await this.model.createSvgDocument({
+                            tag: floorNum,
+                            svg: floorPlan
+                        });
 
                     locationSchema.floor_plans.push({
                         tag: floorNum,

@@ -80,7 +80,7 @@ export default class Alert extends BaseModule {
             }
         }
 
-        this.model.create({
+        const alertSchema = {
             code,
             tagString,
 
@@ -88,12 +88,13 @@ export default class Alert extends BaseModule {
             humidity: data.humidity,
             temperature: data.temperature,
             tvoc: data.tvoc_ppb
-        });
+        };
 
-        doc = (await this.model.getLatestAlertForTagstring(tagString))[0];
-        await this.modules.mail.sendMailAlerts(doc);
-        await this.modules.teams.postAlertToTeams(doc);
-        await this.modules.sms.sendSmsAlerts(doc);
+        this.model.create(alertSchema);
+
+        await this.modules.mail?.sendMailAlerts(alertSchema);
+        await this.modules.teams?.postAlertToTeams(alertSchema);
+        await this.modules.sms?.sendSmsAlerts(alertSchema);
     }
 
     query(query) {
