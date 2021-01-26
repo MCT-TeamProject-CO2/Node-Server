@@ -6,7 +6,7 @@ export default class Measurements extends Route {
     }
 
     get route() {
-        return '/measurements';
+        return '';
     }
 
     query(query) {
