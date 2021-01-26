@@ -43,6 +43,10 @@ export default class Measurements extends Route {
         const start = searchParams.get('start');
         const end = searchParams.get('end');
         const fields = searchParams.get('fields');
+        // Default mean to true so bandwidth load is saved
+        const mean = searchParams.has('mean') ? (searchParams.get('mean') == "false" ? false : true) : false;
+
+        console.log(mean);
 
         if (!tagString) return request.reject(400);
 
@@ -81,7 +85,8 @@ export default class Measurements extends Route {
 
         const query =
         `from(bucket: "CO2") ${constraints}
-        |> filter(fn: (r) => r["_measurement"] =~ /${tagString}.*/)`;
+        |> filter(fn: (r) => r["_measurement"] =~ /${tagString}.*/)
+        ${mean ? '|> yield(name: "mean")' : ''}`;
 
         return request.accept(
             await this.query(query)
