@@ -1,5 +1,6 @@
 import Route from '~/src/structures/routes/Route.js'
 import bcrypt from 'bcrypt'
+import crypto from 'crypto'
 
 /**
  * Route: /api/v1/users
