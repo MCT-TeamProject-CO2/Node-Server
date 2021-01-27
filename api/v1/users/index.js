@@ -80,8 +80,8 @@ export default class Users extends Route {
         const body = await request.json();
         if (!body) return request.reject(400);
 
-        const session = this.modules.session.getSession(request.headers.authorization);
-        if (!session.isValid(body.permission)) return request.reject(403);
+        const session = await this.modules.session.getSession(request.headers.authorization);
+        if (!session || !session.isValid(body.permission)) return request.reject(403);
 
         let description;
         if (body.type === 'normal') {

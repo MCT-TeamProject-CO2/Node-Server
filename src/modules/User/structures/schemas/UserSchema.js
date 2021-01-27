@@ -19,7 +19,8 @@ const users = new mongoose.Schema({
 });
 
 users.pre('save', async function() {
-    this.password = await bcrypt.hash(this.password, SaltRounds);
+    if (this.password)
+        this.password = await bcrypt.hash(this.password, SaltRounds);
 });
 users.pre('findOneAndUpdate', async function() {
     if (this._update.password) {
