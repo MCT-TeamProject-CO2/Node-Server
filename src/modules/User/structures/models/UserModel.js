@@ -15,12 +15,11 @@ export const createUser = (user) => {
 };
 
 /**
- * Searches for a user based on an object and updates the user to be disabled
- * @param {Object} q 
- * @param {boolean} [getPassword = false]
+ * Searches for a user based on an object and removes it from the DB
+ * @param {Object} q
  */
-export const disableUser = (q, getPassword = false) => {
-    return updateUser(q, { disabled: true }, getPassword);
+export const deleteUser = (q) => {
+    return UserSchema.deleteOne(q).exec();
 };
 
 /**
@@ -62,7 +61,7 @@ export const updateUser = (q, update, getPassword = false) => {
 
 export default {
     createUser,
-    disableUser,
+    deleteUser,
     getUser,
     getUsers,
     updateUser
