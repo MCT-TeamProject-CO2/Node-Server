@@ -58,7 +58,9 @@ export default class Users extends Route {
         if (me) {
             const session = await this.modules.session.getSession(request.headers['authorization']);
 
-            return request.accept(session.user);
+            return request.accept(
+                await this.model.getUser({ uid: session.uid })
+            );
         }
 
         if (!await this.isSessionValid(request, 'admin')) return request.reject(403);
@@ -166,11 +168,13 @@ export default class Users extends Route {
             }
         }
 
-        try {        
+        try {
+            const userSchema = await this.model.updateUser(body.query, body.update);
             await this.modules.mail.sendUserUpdatedMail(user.email);
+
             return request.accept({
                 success: true,
-                data: await this.model.updateUser(body.query, body.update)
+                data: userSchema
             });
         } catch (error) {
             return request.reject(406, {
