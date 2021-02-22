@@ -4,12 +4,10 @@ export default class Session {
      * @param {string} sessionId 
      * @param {UserSchema} user 
      */
-    constructor(module, sessionId, user = null) {
+    constructor(module, sessionId, user) {
         this._module = module;
         this._sessionId = sessionId;
         this._user = user;
-        
-        this._is_token = user ? false : true;
     }
 
     get id() {
@@ -17,7 +15,7 @@ export default class Session {
     }
 
     get permLevel() {
-        return this._is_token ? 'info' : this.user.permission;
+        return this.user.permission;
     }
 
     get uid() {
@@ -33,6 +31,19 @@ export default class Session {
 
         if (levels.indexOf(permlevel) > levels.indexOf(this.permLevel))
             return false;
-        return this._is_token ? false : !this._user.disabled;
+        return !this._user.disabled;
+    }
+
+    static deserialize(module, string) {
+        const session = JSON.parse(string);
+
+        return new Session(module, session.sessionId, session.user);
+    }
+
+    serialize() {
+        return JSON.stringify({
+            sessionId: this.id,
+            user: this.user
+        });
     }
 }

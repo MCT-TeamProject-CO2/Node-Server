@@ -27,6 +27,11 @@ export default {
             useCreateIndex: true
         }
     },
+    redis: {
+        port: 6379,
+        host: '192.168.1.3',
+        password: ''
+    },
     ms_teams:{ 
         WebHookUrl:""
     },
