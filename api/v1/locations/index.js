@@ -64,7 +64,7 @@ export default class Location extends Route {
     }
 
     async delete(request) {
-        if (!await this.isSessionValid(request, 'admin')) return request.reject(403);
+        if (!this.isSessionValid(request, 'admin')) return request.reject(403);
 
         const body = await request.json();
         if (!body) return request.reject(400);
@@ -92,7 +92,7 @@ export default class Location extends Route {
      * @param {Request} request 
      */
     async get(request) {
-        if (!await this.isSessionValid(request)) return request.reject(403);
+        if (!this.isSessionValid(request)) return request.reject(403);
 
         const searchParams = new URLSearchParams(request.searchParams);
         const tag = searchParams.get('tag');
@@ -111,7 +111,7 @@ export default class Location extends Route {
      * @param {Request} request 
      */
     async post(request) {
-        if (!await this.isSessionValid(request, 'admin')) return request.reject(403);
+        if (!this.isSessionValid(request, 'admin')) return request.reject(403);
 
         const formUpload = request.headers['content-type'].includes('multipart/form-data');
         if (formUpload) {
@@ -172,7 +172,7 @@ export default class Location extends Route {
      * @param {Request} request 
      */
     async put(request) {
-        if (!await this.isSessionValid(request, 'admin')) return request.reject(403);
+        if (!this.isSessionValid(request, 'admin')) return request.reject(403);
 
         const formUpload = request.headers['content-type'].includes('multipart/form-data');
         if (formUpload) {

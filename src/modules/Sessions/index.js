@@ -80,10 +80,10 @@ export default class Sessions extends BaseModule {
      * @param {string} sessionId
      * @returns {boolean}
      */
-    async isSessionValid(sessionId, permLevel) {
+    isSessionValid(sessionId, permLevel) {
         if (!this.ready) return false;
 
-        const session = await this.getSession(sessionId);
+        const session = this.getSession(sessionId);
         if (session) return session.isValid(permLevel);
         return false;
     }

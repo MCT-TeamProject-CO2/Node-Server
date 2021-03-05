@@ -22,7 +22,7 @@ export default class ResetUserPassword extends Route {
      * @param {Request} request 
      */
     async post(request) {
-        if (!await this.isSessionValid(request, 'admin')) return request.reject(403);
+        if (!this.isSessionValid(request, 'admin')) return request.reject(403);
 
         const body = await request.json();
         if (!body) return request.reject(400);

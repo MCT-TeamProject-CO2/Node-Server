@@ -15,7 +15,7 @@ export default class AuthValid extends Route {
      * @param {Request} request 
      */
     async get(request) {
-        if (await this.isSessionValid(request)) return request.accept({
+        if (this.isSessionValid(request)) return request.accept({
             valid: true
         });
         return request.accept({

@@ -22,7 +22,7 @@ export default class DeleteUser extends Route {
      * @param {Request} request 
      */
     async delete(request) {
-        if (!await this.isSessionValid(request, 'root')) return request.reject(403);
+        if (!this.isSessionValid(request, 'root')) return request.reject(403);
 
         const body = await request.json();
         if (!body || !body.query || !body.password) return request.reject(400);

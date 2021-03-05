@@ -13,7 +13,7 @@ export default class smartplugs extends Route {
      * 
      */
     async post(request) {
-        if (!await this.isSessionValid(request, 'admin')) return request.reject(403);
+        if (!this.isSessionValid(request, 'admin')) return request.reject(403);
 
         try {
             await this.modules.smartplugs.getDevices()

@@ -14,7 +14,7 @@ export default class Floor extends Route {
     }
 
     async delete(request) {
-        if (!await this.isSessionValid(request, 'admin')) return request.reject(403);
+        if (!this.isSessionValid(request, 'admin')) return request.reject(403);
 
         const body = await request.json();
         if (!body || !body.tag || !body.floor) return request.reject(400);

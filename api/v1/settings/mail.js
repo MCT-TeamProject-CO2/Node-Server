@@ -17,7 +17,7 @@ export default class Mail extends Route {
      * @param {Request} request 
      */
     async delete(request) {
-        if (!await this.isSessionValid(request, 'admin')) return request.reject(403);
+        if (!this.isSessionValid(request, 'admin')) return request.reject(403);
 
         const body = await request.json();
         if (!body) return request.reject(400);
@@ -31,7 +31,7 @@ export default class Mail extends Route {
      * @param {Request} request 
      */
     async get(request) {
-        if (!await this.isSessionValid(request, 'admin')) return request.reject(403);
+        if (!this.isSessionValid(request, 'admin')) return request.reject(403);
 
         const configurations = await this.mail.model.query({});
 
@@ -42,7 +42,7 @@ export default class Mail extends Route {
      * @param {Request} request 
      */
     async post(request) {
-        if (!await this.isSessionValid(request, 'admin')) return request.reject(403);
+        if (!this.isSessionValid(request, 'admin')) return request.reject(403);
 
         const body = await request.json();
         if (!body) return request.reject(400);
