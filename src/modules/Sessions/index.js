@@ -53,7 +53,7 @@ export default class Sessions extends BaseModule {
      * @param {string} sessionId
      * @returns {Session}
      */
-    async getSession(sessionId) {
+    getSession(sessionId) {
         return this.sessions.get(sessionId);
     }
 
