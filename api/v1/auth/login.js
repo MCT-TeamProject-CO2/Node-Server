@@ -31,9 +31,14 @@ export default class Login extends Route {
         delete body.password;
 
         const user = await this.modules.user.model.getUser(body, true);
-        if (!user || user.disabled) return request.accept({
+        if (!user) return request.accept({
             success: false,
             data: 'Unknown username/email given or invalid password entered.'
+        });
+
+        if (user.disabled) return request.accept({
+            success: false,
+            data: 'Your account has been disabled, contact an administrator if you think this was a mistake.'
         });
 
         if (!await this.modules.session.verifyHash(password, user.password)) return request.accept({
@@ -41,10 +46,11 @@ export default class Login extends Route {
             data: 'Unknown username/email given or invalid password entered.'
         });
 
+        const session = await this.modules.session.createSession(user);
         return request.accept({
             success: true,
             data: {
-                sessionId: await this.modules.session.createSession(user)
+                sessionId: session.id
             }
         });
     }

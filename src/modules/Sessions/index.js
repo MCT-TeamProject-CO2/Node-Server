@@ -46,7 +46,7 @@ export default class Sessions extends BaseModule {
 
         this.publisher.publish('session_created', session.serialize());
 
-        return sessionId;
+        return session;
     }
 
     /**
